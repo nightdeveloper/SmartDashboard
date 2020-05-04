@@ -1,0 +1,27 @@
+.nextRow {
+    margin-top: 20px;
+}
+
+.textCol {
+    padding: 5px;
+}
+
+.yandexFirstLetter {
+    color: red;
+}
+
+.yandexRealName {
+    padding-left: 10px;
+}
+
+.authBlock {
+    color: white;
+}
+
+.authBlock .fa-user {
+    margin-right: 10px;
+}
+
+.authBlock .fa-sign-out-alt {
+    margin-left: 20px;
+}

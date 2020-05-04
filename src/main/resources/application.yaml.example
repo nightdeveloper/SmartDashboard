@@ -1,0 +1,46 @@
+spring:
+  thymeleaf.cache: false
+
+  data.mongodb:
+    host: 'localhost'
+    port: '27017'
+    database: 'test'
+
+  security.oauth2.client:
+    registration.yandex:
+      client-id: 'hash'
+      client-secret: 'hash'
+      redirect_uri: '{baseScheme}://{baseHost}{basePort}{basePath}/login/oauth2/code/yandex'
+      scope: 'openid'
+      client-authentication-method: 'basic'
+      authorization-grant-type: 'authorization_code'
+
+    provider.yandex:
+      authorization-uri: 'https://oauth.yandex.ru/authorize'
+      user-info-uri: 'https://login.yandex.ru/info?format=json'
+      user-info-authentication-method: 'header'
+      token-uri: 'https://oauth.yandex.ru/token'
+
+devices:
+  location: 'flat'
+  list:
+    -
+      id: '0x0033333333333333'
+      name: 'Switch'
+      className: 'SwitchSensor'
+    -
+      id: '0x0022222222222222'
+      name: 'Sensor'
+      className: 'ComfortSensor'
+    -
+      id: '0x0011111111111111'
+      name: 'Plug'
+      className: 'PlugSensor'
+
+logging.level:
+  root: 'INFO'
+#  org.springframework.security.oauth2: 'DEBUG'
+#  org.springframework.security.jwt: 'DEBUG'
+#  org.springframework: 'DEBUG'
+#  com.progress.appserv.services.security: 'DEBUG'
+#  org.springframework.data.mongodb.core.MongoTemplate: 'DEBUG'

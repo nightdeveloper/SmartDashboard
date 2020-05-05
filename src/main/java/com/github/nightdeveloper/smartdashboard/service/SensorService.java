@@ -74,7 +74,7 @@ public class SensorService {
     }
 
     public List<AverageDeviceValueDTO> getLastBattery() {
-        return distinct(roundAverages(aggregationRepository.getAverages("battery", 90)));
+        return distinct(roundAverages(aggregationRepository.getAverages("voltage", 90)));
     }
 
     public List<AverageDeviceValueDTO> getLastLinkQuality() {

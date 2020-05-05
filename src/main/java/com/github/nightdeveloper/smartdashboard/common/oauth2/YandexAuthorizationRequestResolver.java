@@ -1,4 +1,4 @@
-package com.github.nightdeveloper.smartdashboard.common;
+package com.github.nightdeveloper.smartdashboard.common.oauth2;
 
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;

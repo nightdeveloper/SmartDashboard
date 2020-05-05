@@ -1,5 +1,6 @@
-package com.github.nightdeveloper.smartdashboard.common;
+package com.github.nightdeveloper.smartdashboard.common.oauth2;
 
+import com.github.nightdeveloper.smartdashboard.property.UsersProperty;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
@@ -34,6 +35,7 @@ public class YandexOAuth2UserService extends DefaultOAuth2UserService {
 
     private static final String MISSING_USER_INFO_URI_ERROR_CODE = "missing_user_info_uri";
     private static final String INVALID_USER_INFO_RESPONSE_ERROR_CODE = "invalid_user_info_response";
+    private static final String ACCESS_DENIED_ERROR_CODE = "access_denied";
 
     private static final ParameterizedTypeReference<Map<String, Object>> PARAMETERIZED_RESPONSE_TYPE =
             new ParameterizedTypeReference<Map<String, Object>>() {};
@@ -42,7 +44,11 @@ public class YandexOAuth2UserService extends DefaultOAuth2UserService {
 
     private final RestOperations restOperations;
 
-    public YandexOAuth2UserService() {
+    private final UsersProperty usersProperty;
+
+    public YandexOAuth2UserService(UsersProperty usersProperty) {
+        this.usersProperty = usersProperty;
+
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setErrorHandler(new OAuth2ErrorResponseErrorHandler());
         this.restOperations = restTemplate;
@@ -103,6 +109,14 @@ public class YandexOAuth2UserService extends DefaultOAuth2UserService {
 
         } else {
             userAttributes = new HashMap<>();
+        }
+
+        String login = userAttributes.get("login").toString();
+
+        if (login == null || !usersProperty.isUserAllowed(login)) {
+            OAuth2Error oauth2Error = new OAuth2Error(ACCESS_DENIED_ERROR_CODE,
+                    "Access denied for user " + login, null);
+            throw new OAuth2AuthenticationException(oauth2Error, oauth2Error.toString());
         }
 
         return new DefaultOAuth2User(authorities, userAttributes, "login");

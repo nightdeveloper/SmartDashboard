@@ -21,6 +21,11 @@ spring:
       user-info-authentication-method: 'header'
       token-uri: 'https://oauth.yandex.ru/token'
 
+users:
+  allowed:
+    -
+      login: "yandex_user"
+
 devices:
   location: 'flat'
   list:

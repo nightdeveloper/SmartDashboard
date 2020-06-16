@@ -2,6 +2,7 @@ package com.github.nightdeveloper.smartdashboard.controller;
 
 import com.github.nightdeveloper.smartdashboard.common.Constants;
 import com.github.nightdeveloper.smartdashboard.common.Devices;
+import com.github.nightdeveloper.smartdashboard.common.Utils;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
 import org.apache.logging.log4j.LogManager;
@@ -52,7 +53,11 @@ public class DashboardController {
         model.put("pressure", sensorService.getLastPressure());
         model.put("linkQuality", sensorService.getLastLinkQuality());
 
-        List<AverageDeviceValueDTO> lastBattery = sensorService.getLastBattery();
+        List<AverageDeviceValueDTO> lastBattery =
+                sensorService.getLastBattery();
+
+        Utils.batteryVoltageListToPercentageList(lastBattery);
+
         model.put("battery", lastBattery);
         model.put("batteryStatus", sensorService.getBatteryStatus(lastBattery));
 

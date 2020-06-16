@@ -77,8 +77,14 @@ public class AggregationRepository {
                 sort(Sort.Direction.DESC, "deviceId", "year", "month", "day", "hour", "minute")
         );
 
+        Long timeStart = System.currentTimeMillis();
+
         AggregationResults<AverageDeviceValueDTO> result = mongoTemplate
                 .aggregate(selectAggregation, "sensor", AverageDeviceValueDTO.class);
+
+        Long timeEnd = System.currentTimeMillis();
+
+        logger.info("request run for " + (timeEnd - timeStart) + " nano");
 
         return result.getMappedResults();
     }

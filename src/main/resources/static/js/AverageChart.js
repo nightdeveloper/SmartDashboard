@@ -29,6 +29,9 @@ AverageChart = function(canvasId, averagesData, title) {
                 xAxes: [{
                     type: 'time',
                     display: true,
+                    time: {
+                        tooltipFormat:'MM.DD.YYYY HH:mm'
+                    },
                     scaleLabel: {
                         display: false,
                         labelString: 'Date'

@@ -1,5 +1,19 @@
 AverageChart = function(canvasId, averagesData, title) {
 
+    function newDateFromComponents(year, month, day, hour, minute) {
+        var m = moment.utc(year + "-" + month + "-" + day + " " + hour + ":" + minute, "YYYY-MM-DD HH:mm");
+        var date = new Date(m.local().format("YYYY-MM-DDTHH:mm:ssZ"));
+
+        return date;
+    }
+
+    function momentFromTimestamp(timestamp) {
+        var m = moment.utc(timestamp);
+        m = m.local();
+
+        return m;
+    }
+
     var config = {
         type: 'line',
         data: {
@@ -22,8 +36,7 @@ AverageChart = function(canvasId, averagesData, title) {
                     ticks: {
                         callback: function(value, index, values) {
                             var timestamp = values[index].value;
-
-                            return moment(timestamp).format("DD  HH:mm");
+                            return momentFromTimestamp(timestamp).format("DD  HH:mm");
                         },
                         major: {
                             fontStyle: 'bold',
@@ -124,7 +137,7 @@ AverageChart = function(canvasId, averagesData, title) {
             }
 
             datasetsByName[deviceId].data.push({
-                x: new Date(values.year, values.month, values.day, values.hour, values.minute),
+                x: newDateFromComponents(values.year, values.month, values.day, values.hour, values.minute),
                 y: values.average
             })
         }

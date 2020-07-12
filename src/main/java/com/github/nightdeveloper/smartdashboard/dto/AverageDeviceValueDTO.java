@@ -15,6 +15,16 @@ public class AverageDeviceValueDTO {
     public AverageDeviceValueDTO() {
     }
 
+    public AverageDeviceValueDTO(AverageDeviceValueDTO value) {
+        this.deviceId = value.deviceId;
+        this.year = value.year;
+        this.month = value.month;
+        this.day = value.day;
+        this.hour = value.hour;
+        this.minute = value.minute;
+        this.average = value.average;
+    }
+
     public String getDeviceId() {
         return deviceId;
     }

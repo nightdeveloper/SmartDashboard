@@ -2,6 +2,7 @@ package com.github.nightdeveloper.smartdashboard.property;
 
 public class DeviceProperty {
     private String id;
+    private String location;
     private String name;
     private String className;
 
@@ -14,6 +15,14 @@ public class DeviceProperty {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getName() {
@@ -36,6 +45,7 @@ public class DeviceProperty {
     public String toString() {
         return "DeviceProperty{" +
                 "id='" + id + '\'' +
+                ", location='" + location + '\'' +
                 ", name='" + name + '\'' +
                 ", className='" + className + '\'' +
                 '}';

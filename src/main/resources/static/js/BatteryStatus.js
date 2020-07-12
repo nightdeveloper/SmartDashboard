@@ -26,7 +26,7 @@ BatteryStatus = function (divId, batteryData, title) {
                 + data.currentValue + "% ";
 
             if (data.daysLeft > 0) {
-                content += ", " + data.daysLeft + " days left"
+                content += ", est. " + data.daysLeft + " days left"
             }
 
             content += "</p>";

@@ -46,7 +46,7 @@ public class AggregationRepository {
                 .aggregate(getMaxDate, "sensor", UniqueDateDTO.class)
                 .getUniqueMappedResult();
 
-        logger.info("get max date for " + field + " = " + maxDate);
+        logger.info(field + ": get max date for " + field + " = " + maxDate);
 
         if (maxDate == null) {
             return new ArrayList<>();
@@ -57,7 +57,7 @@ public class AggregationRepository {
                 .atZone(ZoneId.systemDefault()).toLocalDateTime();
 
 
-        logger.info("get min date for " + field + " = " + minDate);
+        logger.info(field + ": get min date for " + field + " = " + minDate);
 
         Aggregation selectAggregation = newAggregation(
                 match(Criteria.where(field).ne(null)
@@ -84,9 +84,11 @@ public class AggregationRepository {
 
         Long timeEnd = System.currentTimeMillis();
 
-        logger.info("request run for " + (timeEnd - timeStart) + " nano");
+        List<AverageDeviceValueDTO> results = result.getMappedResults();
 
-        return result.getMappedResults();
+        logger.info(field + ": request run for " + (timeEnd - timeStart) + " nano (items: " + results.size() + ")");
+
+        return results;
     }
 
 }

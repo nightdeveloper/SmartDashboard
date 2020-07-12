@@ -60,16 +60,24 @@ public class Utils {
 
                     if (o1 == null && o2 == null) {
                         return 0;
+
                     } else if (o1 == null) {
                         result = -1;
+
                     } else if (o2 == null) {
                         result = 1;
+
                     } else {
-                        result = getDateFromExploded(o1).compareTo(getDateFromExploded(o2));
+                        result = o1.getDeviceId().compareTo(o2.getDeviceId());
+
+                        if (result == 0) {
+                            result = getDateFromExploded(o1).compareTo(getDateFromExploded(o2));
+                        }
                     }
 
                     if (direction == SortDirection.ASC) {
                         return result;
+
                     } else {
                         return -result;
                     }

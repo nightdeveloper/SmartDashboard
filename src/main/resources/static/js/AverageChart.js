@@ -21,6 +21,7 @@ AverageChart = function(canvasId, averagesData, title) {
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             title: {
                 display: true,
                 text: title

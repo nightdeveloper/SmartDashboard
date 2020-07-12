@@ -7,8 +7,6 @@ import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
 import com.github.nightdeveloper.smartdashboard.repository.AggregationRepository;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
@@ -26,43 +24,74 @@ public class SensorService {
         this.aggregationRepository = aggregationRepository;
     }
 
-    private List<AverageDeviceValueDTO> roundAverages(List<AverageDeviceValueDTO> values) {
-        values.forEach(valueDTO -> valueDTO.setAverage(
-                BigDecimal.valueOf(valueDTO.getAverage()).setScale(0, RoundingMode.HALF_EVEN).doubleValue()
-        ));
-        return values;
-    }
-
-    private List<AverageDeviceValueDTO> distinct(List<AverageDeviceValueDTO> values) {
-
-        List<AverageDeviceValueDTO> result = new ArrayList<>();
-
-        Map<String, Double> prevValues = new HashMap<>();
+    private List<AverageDeviceValueDTO> smooth(List<AverageDeviceValueDTO> values, int smoothCount) {
 
         List<AverageDeviceValueDTO> sortedValues = Utils.sortAverages(values, SortDirection.ASC);
 
-        for(int i=sortedValues.size()-1; i>=0; i--) {
-            AverageDeviceValueDTO valueDTO = sortedValues.get(i);
+        int itemsCountForDevice = 0;
+        String currentDeviceId = null;
+        List<AverageDeviceValueDTO> smoothedValues = new ArrayList<>();
+        for (int i = 0; i < sortedValues.size(); i++) {
 
-            Double prev = prevValues.get(valueDTO.getDeviceId());
+            AverageDeviceValueDTO currentValue = sortedValues.get(i);
 
-            if (prev == null ||
-                    (valueDTO.getAverage() != null && valueDTO.getAverage().compareTo(prev) != 0)) {
-                result.add(valueDTO);
+            if (currentDeviceId == null || !currentDeviceId.equals(currentValue.getDeviceId())) {
+                currentDeviceId = currentValue.getDeviceId();
+                itemsCountForDevice = 0;
             }
 
-            prevValues.put(valueDTO.getDeviceId(), valueDTO.getAverage());
+            if (itemsCountForDevice > 1) {
+                double avg = 0;
+
+                int currentItemsForAverage = Math.min(itemsCountForDevice, smoothCount);
+
+                for (int j = i - currentItemsForAverage + 1; j <= i; j++) {
+                    avg += sortedValues.get(j).getAverage();
+                }
+                avg = avg / currentItemsForAverage;
+
+                AverageDeviceValueDTO newValue = new AverageDeviceValueDTO(currentValue);
+                newValue.setAverage(Math.floor(avg * 100) / 100);
+                smoothedValues.add(newValue);
+
+            } else {
+                smoothedValues.add(currentValue);
+            }
+
+            itemsCountForDevice++;
+        }
+
+        List<AverageDeviceValueDTO> result = new ArrayList<>();
+        for (int i = 0; i < smoothedValues.size(); i++) {
+            AverageDeviceValueDTO valueDTO = smoothedValues.get(i);
+
+            boolean isLastItem = i == smoothedValues.size() - 1;
+
+            AverageDeviceValueDTO prevItem = i > 0 ? smoothedValues.get(i - 1) : null;
+            AverageDeviceValueDTO nextItem = !isLastItem ? smoothedValues.get(i + 1) : null;
+
+            if (prevItem == null || nextItem == null ||
+                    prevItem.getDeviceId() == null || nextItem.getDeviceId() == null) {
+                result.add(valueDTO);
+
+            } else if (!prevItem.getDeviceId().equals(nextItem.getDeviceId())) {
+                result.add(valueDTO);
+
+            } else if (prevItem.getAverage() != null && nextItem.getAverage() != null &&
+                            !prevItem.getAverage().equals(nextItem.getAverage())) {
+                result.add(valueDTO);
+            }
         }
 
         return result;
     }
 
     public List<AverageDeviceValueDTO> getLastTemperatures() {
-        return distinct(roundAverages(aggregationRepository.getAverages("temperature", 1)));
+        return aggregationRepository.getAverages("temperature", 1);
     }
 
     public List<AverageDeviceValueDTO> getLastHumidity() {
-        return distinct(roundAverages(aggregationRepository.getAverages("humidity", 1)));
+        return aggregationRepository.getAverages("humidity", 1);
     }
 
     public List<AverageDeviceValueDTO> getLastPressure() {
@@ -70,15 +99,15 @@ public class SensorService {
 
         results.forEach(valueDTO -> valueDTO.setAverage((double) Math.round(valueDTO.getAverage() * 0.750062)));
 
-        return distinct(roundAverages(results));
+        return smooth(results, 10);
     }
 
     public List<AverageDeviceValueDTO> getLastBattery() {
-        return distinct(roundAverages(aggregationRepository.getAverages("voltage", 90)));
+        return smooth(aggregationRepository.getAverages("voltage", 7), 20);
     }
 
     public List<AverageDeviceValueDTO> getLastLinkQuality() {
-        return distinct(roundAverages(aggregationRepository.getAverages("linkquality", 1)));
+        return aggregationRepository.getAverages("linkquality", 1);
     }
 
     public Map<String, BatteryStatusDTO> getBatteryStatus(List<AverageDeviceValueDTO> values) {

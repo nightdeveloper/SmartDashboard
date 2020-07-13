@@ -3,13 +3,13 @@ BatteryStatus = function (divId, batteryData, title) {
     function getDeviceById(id) {
         for (var i = 0; i < devices.length; i++) {
             if (devices[i].id === id) {
-                return devices[i].name
+                return devices[i]
             }
         }
-        return id;
+        return undefined;
     }
 
-    this.render = function () {
+    this.render = function (locationValue) {
 
         var content = "<h5>" + title + ":</h5>";
 
@@ -21,7 +21,17 @@ BatteryStatus = function (divId, batteryData, title) {
 
             var data = batteryData[id];
 
-            content += "<p>" + getDeviceById(id) + " "
+            var device = getDeviceById(id);
+
+            if (!device) {
+                return;
+            }
+
+            if (locationValue && device.location !== locationValue) {
+                continue;
+            }
+
+            content += "<p>" + (locationValue ? "" : device.location + ": ") + device.name + " "
                 + moment(data.currentValueDate).format("DD.MM.YYYY") + " "
                 + data.currentValue + "% ";
 

@@ -30,9 +30,19 @@ body, html {
     margin-left: 20px;
 }
 
+.nav {
+    position: absolute;
+    left: 10px;
+    top: 56px;
+}
+
+.navLabel {
+    padding-top: 7px;
+}
+
 .dash-content {
     position: absolute;
-    top: 56px;
+    top: 90px;
     bottom: 50px;
     left: 0;
     right: 0;

@@ -62,19 +62,10 @@ AverageChart = function(canvasId, averagesData, title) {
     function getDeviceById(id) {
         for(var i=0; i<devices.length; i++) {
             if (devices[i].id === id) {
-                return devices[i].name
+                return devices[i]
             }
         }
-        return id;
-    }
-
-    function isDeviceType(id, type) {
-        for(var i=0; i<devices.length; i++) {
-            if (devices[i].id === id && devices[i].wrappingClass.indexOf(type) > 0) {
-                return true;
-            }
-        }
-        return false;
+        return undefined;
     }
 
     function getChartColors() {
@@ -113,9 +104,9 @@ AverageChart = function(canvasId, averagesData, title) {
         return that.chart;
     }
 
-    function fillAverageDatasets() {
+    this.fillAverageDatasets = function(locationFilter) {
 
-        var datasets = config.data.datasets;
+        var datasets = [];
 
         var datasetsByName = {};
 
@@ -126,13 +117,23 @@ AverageChart = function(canvasId, averagesData, title) {
             var values = that.averageChart[i];
             var deviceId = values["deviceId"];
 
-            if (!isDeviceType(deviceId, "Comfort")) {
+            var device = getDeviceById(deviceId);
+
+            if (!device) {
+                continue;
+            }
+
+            if (device.wrappingClass.indexOf("Comfort") === -1) {
+                continue;
+            }
+
+            if (locationFilter && device.location !== locationFilter) {
                 continue;
             }
 
             if (!datasetsByName[deviceId]) {
                 datasetsByName[deviceId] = {
-                    label: getDeviceById(deviceId),
+                    label: device.name,
                     backgroundColor: "#FFFFFF",
                     borderColor: colors[nextColor++],
                     fill: false,
@@ -161,13 +162,19 @@ AverageChart = function(canvasId, averagesData, title) {
 
             datasets.push(datasetsByName[id]);
         }
+
+        config.data.datasets = datasets;
     }
 
     this.render = function() {
-        fillAverageDatasets();
+        this.fillAverageDatasets();
 
         var ctx = document.getElementById(this.canvasId).getContext('2d');
 
         this.chart = new Chart(ctx, config);
+    }
+
+    this.update = function() {
+        this.chart.update();
     }
 };

@@ -23,16 +23,17 @@ public class Devices {
         for (DeviceProperty deviceProperty : devicesList.getList()) {
             String id = deviceProperty.getId();
             String name = deviceProperty.getName();
+            String location = deviceProperty.getLocation();
             String className = deviceProperty.getClassName();
             switch(className) {
                 case "SwitchSensor":
-                    devices.add(new Device<SwitchSensor>(id, name, SwitchSensor.class));
+                    devices.add(new Device<SwitchSensor>(id, name, location, SwitchSensor.class));
                     break;
                 case "ComfortSensor":
-                    devices.add(new Device<ComfortSensor>(id, name, ComfortSensor.class));
+                    devices.add(new Device<ComfortSensor>(id, name, location, ComfortSensor.class));
                     break;
                 case "PlugSensor":
-                    devices.add(new Device<PlugSensor>(id, name, PlugSensor.class));
+                    devices.add(new Device<PlugSensor>(id, name, location, PlugSensor.class));
                     break;
                 default:
                     throw new RuntimeException("Invalid sensor type - " + className);

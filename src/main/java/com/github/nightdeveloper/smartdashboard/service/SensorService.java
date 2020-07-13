@@ -7,6 +7,8 @@ import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
 import com.github.nightdeveloper.smartdashboard.repository.AggregationRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
@@ -22,6 +24,13 @@ public class SensorService {
 
     public SensorService(AggregationRepository aggregationRepository) {
         this.aggregationRepository = aggregationRepository;
+    }
+
+    private List<AverageDeviceValueDTO> roundAverages(List<AverageDeviceValueDTO> values) {
+        values.forEach(valueDTO -> valueDTO.setAverage(
+                BigDecimal.valueOf(valueDTO.getAverage()).setScale(2, RoundingMode.HALF_EVEN).doubleValue()
+        ));
+        return values;
     }
 
     private List<AverageDeviceValueDTO> smooth(List<AverageDeviceValueDTO> values, int smoothCount) {
@@ -87,11 +96,11 @@ public class SensorService {
     }
 
     public List<AverageDeviceValueDTO> getLastTemperatures() {
-        return aggregationRepository.getAverages("temperature", 1);
+        return roundAverages(aggregationRepository.getAverages("temperature", 1));
     }
 
     public List<AverageDeviceValueDTO> getLastHumidity() {
-        return aggregationRepository.getAverages("humidity", 1);
+        return roundAverages(aggregationRepository.getAverages("humidity", 1));
     }
 
     public List<AverageDeviceValueDTO> getLastPressure() {
@@ -103,11 +112,11 @@ public class SensorService {
     }
 
     public List<AverageDeviceValueDTO> getLastBattery() {
-        return smooth(aggregationRepository.getAverages("voltage", 7), 20);
+        return roundAverages(smooth(aggregationRepository.getAverages("voltage", 7), 20));
     }
 
     public List<AverageDeviceValueDTO> getLastLinkQuality() {
-        return aggregationRepository.getAverages("linkquality", 1);
+        return roundAverages(aggregationRepository.getAverages("linkquality", 1));
     }
 
     public Map<String, BatteryStatusDTO> getBatteryStatus(List<AverageDeviceValueDTO> values) {

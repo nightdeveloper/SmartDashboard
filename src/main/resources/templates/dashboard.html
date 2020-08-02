@@ -18,6 +18,9 @@
     <div class="container-fluid authBlock">
         <div class="col">
             <a class="navbar-brand" th:href="@{''}">Dashboard</a>
+
+            <ul class="nav nav-tabs" id="upperNav">
+            </ul>
         </div>
         <div class="col text-right">
             <i class="fas fa-user"></i>
@@ -32,69 +35,86 @@
     </div>
 </nav>
 
-<nav class="nav" id="navigation">
-</nav>
+<div class="container-fluid dash-content">
 
-<main role="main" class="container-fluid">
-    <div class="container-fluid dash-content">
-        <div class="row h-50">
-            <div class="col-4">
-                <canvas id="temperaturesCanvas" width="100%" height="100%"></canvas>
-            </div>
-            <div class="col-4">
-                <canvas id="humidityCanvas" width="100%" height="100%"></canvas>
-            </div>
-            <div class="col-4 textCol" id="batteryStatus">
+    <div id="content_sensors" class="hidden full-height">
+        <ul class="nav" id="sensorsNav">
+        </ul>
+        <div class="container-fluid full-height">
+            <div class="row h-50">
+                <div class="col-4">
+                    <canvas id="temperaturesCanvas" width="100%"></canvas>
+                </div>
+                <div class="col-4">
+                    <canvas id="humidityCanvas" width="100%"></canvas>
+                </div>
+                <div class="col-4 textCol" id="batteryStatus">
 
+                </div>
+            </div>
+            <div class="row nextRow h-50">
+                <div class="col-4">
+                    <canvas id="pressureCanvas" width="100%"></canvas>
+                </div>
+                <div class="col-4">
+                    <canvas id="linkQualityCanvas" width="100%"></canvas>
+                </div>
+                <div class="col-4">
+                    <canvas id="batteryCanvas"></canvas>
+                </div>
             </div>
         </div>
-        <div class="row nextRow h-50">
-            <div class="col-4">
-                <canvas id="pressureCanvas" width="100%" height="100%"></canvas>
-            </div>
-            <div class="col-4">
-                <canvas id="linkQualityCanvas" width="100%" height="100%"></canvas>
-            </div>
-            <div class="col-4">
-                <canvas id="batteryCanvas"></canvas>
-            </div>
-        </div>
+
+        <script th:inline="javascript">
+            devices = /*[[${devices}]]*/ [{
+                id: 123,
+                wrappingClass: "test"
+            }];
+
+            telemetryTemperatures = [[${temperatures}]];
+            telemetryHumidity = [[${humidity}]];
+            telemetryPressure = [[${pressure}]];
+            telemetryLinkQuality = [[${linkQuality}]];
+            telemetryBattery = [[${battery}]];
+
+            telemetryBatteryStatus = /*[[${batteryStatus}]]*/ {
+                "test": {
+                    currentValue: 123,
+                    daysLeft: 100,
+                    lastMaxValueDate: "2001-01-01 10:01",
+                    currentValueDate: "2001-01-01 10:01",
+                    dateDischarge: "2001-01-01 10:01"
+                }
+            };
+        </script>
     </div>
-</main>
+
+    <div id="content_cameras" class="hidden">
+        <script th:inline="javascript">
+            cameras = [[${cameras}]];
+        </script>
+
+        click to load cameras
+    </div>
+
+    <div id="content_discovery" class="hidden">
+        click to discover
+    </div>
+</div>
 
 <script type="text/javascript" th:src="@{webjars/momentjs/2.24.0/moment.js}"></script>
 <script type="text/javascript" th:src="@{webjars/moment-timezone/0.5.5/moment-timezone.js}"></script>
 <script type="text/javascript" th:src="@{webjars/jquery/3.5.0/jquery.js}"></script>
 <script type="text/javascript" th:src="@{webjars/chartjs/2.9.3/Chart.js}"></script>
 
+<script type="text/javascript" th:src="@{/js/Navigation.js}"></script>
+
 <script type="text/javascript" th:src="@{/js/AverageChart.js}"></script>
 <script type="text/javascript" th:src="@{/js/BatteryStatus.js}"></script>
 <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
 
-<script th:inline="javascript">
-    telemetryTemperatures = [[${temperatures}]];
-    telemetryHumidity = [[${humidity}]];
-    telemetryPressure = [[${pressure}]];
-    telemetryLinkQuality = [[${linkQuality}]];
-    telemetryBattery = [[${battery}]];
-
-    telemetryBatteryStatus = /*[[${batteryStatus}]]*/ {
-        "test": {
-            currentValue: 123,
-            daysLeft: 100,
-            lastMaxValueDate: "2001-01-01 10:01",
-            currentValueDate: "2001-01-01 10:01",
-            dateDischarge: "2001-01-01 10:01"
-        }
-    };
-
-    devices = /*[[${devices}]]*/ [{
-        id: 123,
-        wrappingClass: "test"
-    }];
-</script>
-
 <script type="text/javascript" th:src="@{webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>
+
 </body>
 </html>
 

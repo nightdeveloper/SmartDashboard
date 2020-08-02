@@ -26,6 +26,17 @@ users:
     -
       login: "yandex_user"
 
+cameras:
+  list:
+    - 
+      name: 'camera1'
+      url: 'http://127.0.0.1:8000'
+      current: '/images/current.jpg'
+    - 
+      name: 'camera2'
+      url: 'http://127.0.0.2:8000'
+      current: '/images/current.jpg'
+
 devices:
   location: 'flat'
   list:

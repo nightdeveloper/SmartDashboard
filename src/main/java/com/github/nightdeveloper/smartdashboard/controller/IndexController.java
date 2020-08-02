@@ -21,7 +21,6 @@ public class IndexController {
 
     private static final Logger logger = LogManager.getLogger(IndexController.class);
 
-
     @GetMapping("favicon.ico")
     @ResponseBody
     void returnNoFavicon() {
@@ -36,7 +35,7 @@ public class IndexController {
 
     @RequestMapping(value = Constants.ENDPOINT_LOGOUT_USER, method = RequestMethod.GET)
     @ResponseBody
-    public RedirectView logout(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    public RedirectView logout(HttpServletRequest request, HttpServletResponse response) {
         logger.info("logout requested");
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();

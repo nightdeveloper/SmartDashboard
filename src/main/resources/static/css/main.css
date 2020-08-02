@@ -2,6 +2,10 @@ body, html {
     height: 100%;
 }
 
+.navbar {
+    padding-bottom: 0;
+}
+
 .nextRow {
     margin-top: 20px;
 }
@@ -30,10 +34,12 @@ body, html {
     margin-left: 20px;
 }
 
-.nav {
-    position: absolute;
-    left: 10px;
-    top: 56px;
+#upperNav a {
+    color: white;
+}
+
+#upperNav a.active {
+    color: black;
 }
 
 .navLabel {
@@ -42,9 +48,22 @@ body, html {
 
 .dash-content {
     position: absolute;
-    top: 90px;
-    bottom: 50px;
+    top: 60px;
     left: 0;
     right: 0;
-    width: 100%;
+    bottom: 15px;
+    overflow-y: visible;
+}
+
+.hidden {
+    display: none;
+}
+
+.full-height {
+    height: 100%;
+}
+
+.navbar-brand {
+    float: left;
+    margin-right: 45px;
 }

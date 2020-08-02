@@ -1,4 +1,4 @@
-function createNavigation() {
+function createSensorsNavigation() {
 
     var locations = [];
 
@@ -8,16 +8,16 @@ function createNavigation() {
         }
     })
 
-    var nav = $(".nav");
+    var nav = $("#sensorsNav");
 
     nav.append("<div class='navLabel'>Locations:</div>");
 
 
     function getNavLocationElement(value) {
-        var navLocation = $("<a class=\"nav-link\" href=\"#\" data-value=\"" + value + "\">" + value + "</a>");
+        var navLocation = $("<a class=\"nav-link\" href=\"#sensors\" data-value=\"" + value + "\">" + value + "</a>");
 
         navLocation.click(function () {
-            window.updateNavigationLocation(value);
+            window.updateSensorsNavigationLocation(value);
         });
 
         return navLocation;
@@ -33,7 +33,10 @@ function createNavigation() {
 
 window.onload = function () {
 
-    createNavigation();
+    var navigation = new Navigation();
+    navigation.init();
+
+    createSensorsNavigation();
 
     var temperatureChart = new AverageChart("temperaturesCanvas", telemetryTemperatures, "Temperature averages");
     temperatureChart.render();
@@ -53,7 +56,7 @@ window.onload = function () {
     var batteryStatus = new BatteryStatus("batteryStatus", telemetryBatteryStatus, "Battery status");
     batteryStatus.render();
 
-    window.updateNavigationLocation = function(locationValue) {
+    window.updateSensorsNavigationLocation = function(locationValue) {
 
         var val = locationValue === "all" ? undefined : locationValue;
 

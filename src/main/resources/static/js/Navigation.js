@@ -47,10 +47,10 @@ Navigation = function () {
         var defaultElement = "sensors";
 
         var hash = window.location.hash;
-        if (hash !== undefined) {
+        if (hash !== undefined && hash !== "") {
             hash = hash.replace("#", "");
 
-            if ($("#nav_" + hash)) {
+            if ($("#nav_" + hash).length) {
                 defaultElement = hash;
             }
         }

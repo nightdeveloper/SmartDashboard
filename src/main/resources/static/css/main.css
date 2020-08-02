@@ -75,3 +75,16 @@ body, html {
 #content_nav_sensors a:hover {
     text-decoration: underline;
 }
+
+.camera-view {
+    float: left;
+    padding: 10px;
+}
+
+.camera-view img {
+    width: 100%;
+}
+
+.camera-width {
+    width: 100%;
+}

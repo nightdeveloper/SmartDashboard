@@ -34,11 +34,14 @@ body, html {
     margin-left: 20px;
 }
 
-#upperNav a {
+#upper_nav {
+}
+
+#upper_nav a {
     color: white;
 }
 
-#upperNav a.active {
+#upper_nav a.active {
     color: black;
 }
 
@@ -52,7 +55,6 @@ body, html {
     left: 0;
     right: 0;
     bottom: 15px;
-    overflow-y: visible;
 }
 
 .hidden {
@@ -64,6 +66,12 @@ body, html {
 }
 
 .navbar-brand {
-    float: left;
-    margin-right: 45px;
+}
+
+#content_nav_sensors a {
+    color: white;
+}
+
+#content_nav_sensors a:hover {
+    text-decoration: underline;
 }

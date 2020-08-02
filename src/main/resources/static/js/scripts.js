@@ -8,7 +8,7 @@ function createSensorsNavigation() {
         }
     })
 
-    var nav = $("#sensorsNav");
+    var nav = $("#content_nav_sensors");
 
     nav.append("<div class='navLabel'>Locations:</div>");
 
@@ -55,6 +55,12 @@ window.onload = function () {
 
     var batteryStatus = new BatteryStatus("batteryStatus", telemetryBatteryStatus, "Battery status");
     batteryStatus.render();
+
+    var camerasTab = new CamerasTab();
+    camerasTab.init();
+
+    var discoveryTab = new DiscoveryTab();
+    discoveryTab.init();
 
     window.updateSensorsNavigationLocation = function(locationValue) {
 

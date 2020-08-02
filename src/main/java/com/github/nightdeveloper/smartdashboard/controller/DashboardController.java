@@ -4,6 +4,7 @@ import com.github.nightdeveloper.smartdashboard.common.Constants;
 import com.github.nightdeveloper.smartdashboard.common.Devices;
 import com.github.nightdeveloper.smartdashboard.common.Utils;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
+import com.github.nightdeveloper.smartdashboard.property.CamerasProperty;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,10 +26,12 @@ public class DashboardController {
 
     final private SensorService sensorService;
     final private Devices devices;
+    final private CamerasProperty camerasProperty;
 
-    public DashboardController(SensorService sensorService, Devices devices) {
+    public DashboardController(SensorService sensorService, Devices devices, CamerasProperty camerasProperty) {
         this.sensorService = sensorService;
         this.devices = devices;
+        this.camerasProperty = camerasProperty;
     }
 
     @RequestMapping(value = Constants.ENDPOINT_DASHBOARD, method = RequestMethod.GET)
@@ -60,6 +63,8 @@ public class DashboardController {
 
         model.put("battery", lastBattery);
         model.put("batteryStatus", sensorService.getBatteryStatus(lastBattery));
+
+        model.put("cameras", camerasProperty.getList());
 
         return modelAndView;
     }

@@ -11,12 +11,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.security.Principal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,84 +43,74 @@ public class DiscoveryController {
         return result;
     }
 
-    private static void logAndJoin(List<String> result, String str) {
+    private static void logToStream(HttpServletResponse response, String str) throws IOException {
         logger.info(str);
-        result.add(str);
+        response.getOutputStream().print(str + "<br/>");
+        response.getOutputStream().flush();
     }
 
     @RequestMapping(value = Constants.ENDPOINT_DISCOVERY, method = RequestMethod.GET)
     @ResponseBody
-    public ModelAndView discovery(Principal principal) {
+    public void discovery(Principal principal, HttpServletResponse response) throws Exception {
 
         logger.info("started discovery " + principal.getName());
 
-        ModelAndView modelAndView = new ModelAndView("discovery");
-        Map<String, Object> model = modelAndView.getModel();
+        response.setBufferSize(0);
+        response.setContentType("text/event-stream");
 
-        List<String> result = new ArrayList<>();
+        String hostname = InetAddress.getLocalHost().getHostName();
 
-        try {
-            String hostname = InetAddress.getLocalHost().getHostName();
+        logToStream(response, "Using hostname " + hostname);
 
-            logAndJoin(result, "Using hostname " + hostname);
+        List<InetAddress> addresses = getLocalAddresses();
 
-            List<InetAddress> addresses = getLocalAddresses();
+        for (InetAddress address : addresses) {
 
-            for (InetAddress address : addresses) {
+            logToStream(response, "querying interface " + address.getHostAddress());
 
-                logAndJoin(result, "querying interface " + address.getHostAddress());
+            Service discoveryService = Service.fromName(Service.SERVICE_QUERY);
+            Query serviceQuery = Query.createFor(discoveryService, Domain.LOCAL);
+            Set<Instance> serviceInstances = serviceQuery.runOnce(address);
+            logToStream(response, "got count " + serviceInstances.size());
 
-                Service discoveryService = Service.fromName(Service.SERVICE_QUERY);
-                Query serviceQuery = Query.createFor(discoveryService, Domain.LOCAL);
-                Set<Instance> serviceInstances = serviceQuery.runOnce(address);
-                logAndJoin(result, "got count " + serviceInstances.size());
-
-                List<String> serviceNames = serviceInstances.stream().map(Instance::getFullName)
-                        .sorted()
-                        .distinct()
-                        .collect(Collectors.toList());
+            List<String> serviceNames = serviceInstances.stream().map(Instance::getFullName)
+                    .sorted()
+                    .distinct()
+                    .collect(Collectors.toList());
 
 
-                for (String serviceName : serviceNames) {
-                    logAndJoin(result, "Discovered service " + serviceName + ":");
+            for (String serviceName : serviceNames) {
+                logToStream(response, "Discovered service " + serviceName + ":");
 
-                    Query instanceQuery = Query.createFor(Service.fromName(serviceName), Domain.LOCAL);
-                    Set<Instance> instances = instanceQuery.runOnce(address);
+                Query instanceQuery = Query.createFor(Service.fromName(serviceName), Domain.LOCAL);
+                Set<Instance> instances = instanceQuery.runOnce(address);
 
-                    instances.forEach(instance -> logAndJoin(result, " - ["
+                instances.forEach(instance -> {
+                    try {
+                        logToStream(response, " - ["
 
-                            + instance.getAddresses().stream()
-                            .map(inetAddress ->
-                                    inetAddress.getHostName().equals(inetAddress.getHostAddress()) ?
-                                            inetAddress.getHostAddress() :
-                                            inetAddress.getHostName() + " " + inetAddress.getHostAddress())
-                            .collect(Collectors.joining(", "))
+                                + instance.getAddresses().stream()
+                                .map(inetAddress ->
+                                        inetAddress.getHostName().equals(inetAddress.getHostAddress()) ?
+                                                inetAddress.getHostAddress() :
+                                                inetAddress.getHostName() + " " + inetAddress.getHostAddress())
+                                .collect(Collectors.joining(", "))
 
-                            + "] port " + instance.getPort()
+                                + "] port " + instance.getPort()
 
-                            + (instance.getAttributes().size() > 0 ?
-                            " attributes: " + instance.getAttributes().keySet().stream()
-                                    .map(s -> s + " = " + instance.getAttributes().get(s))
-                                    .collect(Collectors.joining(", "))
-                            : "")
-                    ));
+                                + (instance.getAttributes().size() > 0 ?
+                                " attributes: " + instance.getAttributes().keySet().stream()
+                                        .map(s -> s + " = " + instance.getAttributes().get(s))
+                                        .collect(Collectors.joining(", "))
+                                : "")
+                        );
+                    } catch (IOException e) {
+                        logger.error("instance exception", e);
+                    }
+                });
 
-                    logAndJoin(result, "");
-                }
+                logToStream(response, "");
             }
-
-        } catch (UnknownHostException e) {
-            logAndJoin(result, "Unknown host: " + e.toString());
-            logger.error("Unknown host: ", e);
-
-        } catch (IOException e) {
-            logAndJoin(result, "IO error: " + e.toString());
-            logger.error("IO error: ", e);
         }
-
-
-        model.put("info", String.join("<br/>", result));
-
-        return modelAndView;
     }
 }

@@ -17,10 +17,12 @@ Navigation = function () {
                 if (key === locationValue) {
                     $("#nav_" + key).addClass("active");
                     $("#content_" + key).removeClass("hidden");
+                    $("#content_nav_" + key).removeClass("hidden");
 
                 } else {
                     $("#nav_" + key).removeClass("active");
                     $("#content_" + key).addClass("hidden");
+                    $("#content_nav_" + key).addClass("hidden");
                 }
             }
         }
@@ -37,7 +39,7 @@ Navigation = function () {
             return navItem;
         }
 
-        var nav = $("#upperNav");
+        var nav = $("#upper_nav");
         for (var key in elements) {
             nav.append(getNavElement(key));
         }

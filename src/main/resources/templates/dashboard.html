@@ -18,8 +18,13 @@
     <div class="container-fluid authBlock">
         <div class="col">
             <a class="navbar-brand" th:href="@{''}">Dashboard</a>
-
-            <ul class="nav nav-tabs" id="upperNav">
+        </div>
+        <div class="col text-left">
+            <ul class="nav nav-tabs" id="upper_nav">
+            </ul>
+        </div>
+        <div class="col text-left">
+            <ul class="nav" id="content_nav_sensors">
             </ul>
         </div>
         <div class="col text-right">
@@ -38,8 +43,6 @@
 <div class="container-fluid dash-content">
 
     <div id="content_sensors" class="hidden full-height">
-        <ul class="nav" id="sensorsNav">
-        </ul>
         <div class="container-fluid full-height">
             <div class="row h-50">
                 <div class="col-4">
@@ -94,11 +97,15 @@
             cameras = [[${cameras}]];
         </script>
 
-        click to load cameras
+        <div class="container-fluid" id="cameras_views">
+        </div>
     </div>
 
     <div id="content_discovery" class="hidden">
-        click to discover
+        <input type="button" id="content_discovery_button" value="Update discovery"><br/>
+
+        <div id="content_discovery_text">
+        </div>
     </div>
 </div>
 
@@ -111,6 +118,8 @@
 
 <script type="text/javascript" th:src="@{/js/AverageChart.js}"></script>
 <script type="text/javascript" th:src="@{/js/BatteryStatus.js}"></script>
+<script type="text/javascript" th:src="@{/js/CamerasTab.js}"></script>
+<script type="text/javascript" th:src="@{/js/DiscoveryTab.js}"></script>
 <script type="text/javascript" th:src="@{/js/scripts.js}"></script>
 
 <script type="text/javascript" th:src="@{webjars/bootstrap/4.4.1/js/bootstrap.js}"></script>

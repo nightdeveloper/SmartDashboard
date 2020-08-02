@@ -7,14 +7,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,27 +20,16 @@ import java.io.InputStream;
 import java.net.URL;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
 
 @Controller
-public class ImagesController {
+public class CamerasController {
 
-    final static Logger logger = LogManager.getLogger(ImagesController.class);
+    final static Logger logger = LogManager.getLogger(CamerasController.class);
 
-    @Autowired
-    private CamerasProperty camerasProperty;
+    private final CamerasProperty camerasProperty;
 
-    @RequestMapping(value = Constants.ENDPOINT_IMAGES, method = RequestMethod.GET)
-    @ResponseBody
-    public ModelAndView images(Principal principal) {
-
-        logger.info("images root " + principal.getName());
-
-        ModelAndView modelAndView = new ModelAndView("images");
-        Map<String, Object> model = modelAndView.getModel();
-        model.put("cameras", camerasProperty.getList());
-
-        return modelAndView;
+    public CamerasController(CamerasProperty camerasProperty) {
+        this.camerasProperty = camerasProperty;
     }
 
     private byte[] getNAImage() {

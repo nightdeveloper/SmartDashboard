@@ -6,11 +6,11 @@ body, html {
     padding-bottom: 0;
 }
 
-.nextRow {
-    margin-top: 20px;
+.next_row {
+    padding-top: 20px;
 }
 
-.textCol {
+.text_col {
     padding: 5px;
 }
 
@@ -67,7 +67,6 @@ body, html {
 }
 
 #brand_nav {
-    flex-grow: 1;
 }
 
 #user_nav {
@@ -91,6 +90,7 @@ body, html {
     right: 0;
     bottom: 0;
     padding-top: 50px;
+    margin-top: -1px;
 }
 
 .hidden {
@@ -125,6 +125,10 @@ body, html {
     text-decoration: underline;
 }
 
+#content_discovery {
+    padding-top: 10px;
+}
+
 .camera-view {
     float: left;
     padding: 10px;
@@ -136,4 +140,51 @@ body, html {
 
 .camera-width {
     width: 100%;
+}
+
+@media only screen and (max-width: 900px) {
+    #navigation_bar {
+        flex-direction: column;
+    }
+
+    .fixed-top {
+        position: relative;
+    }
+
+    .dash-content {
+        position: relative;
+        padding-top: 0;
+    }
+
+    .full-height {
+        height: auto;
+    }
+
+    .row {
+        flex-direction: column;
+    }
+
+    .col-4 {
+        flex: none;
+        max-width: none;
+        height: 400px;
+        margin-top: 30px;
+    }
+
+    #battery_status {
+        height: auto;
+    }
+
+    #tabs_nav a {
+        border-bottom: none;
+    }
+
+    .nav-tabs .nav-link {
+        border-bottom-left-radius: .25rem;
+        border-bottom-right-radius: .25rem;
+    }
+
+    .w-50 {
+        width: auto;
+    }
 }

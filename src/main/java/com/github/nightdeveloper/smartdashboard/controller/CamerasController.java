@@ -3,18 +3,18 @@ package com.github.nightdeveloper.smartdashboard.controller;
 import com.github.nightdeveloper.smartdashboard.common.Constants;
 import com.github.nightdeveloper.smartdashboard.property.CameraProperty;
 import com.github.nightdeveloper.smartdashboard.property.CamerasProperty;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.File;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -32,27 +32,30 @@ public class CamerasController {
         this.camerasProperty = camerasProperty;
     }
 
-    private byte[] getNAImage() {
+    private void returnNAImage(HttpServletResponse response) {
         try {
-            File file = ResourceUtils.getFile("classpath:na.jpg");
-            return FileUtils.readFileToByteArray(file);
+            InputStream in = CamerasController.class.getResourceAsStream("/na.jpg");
+            IOUtils.copy(in, response.getOutputStream());
         } catch (IOException e) {
             logger.error("can't read n/a image", e);
         }
-        return null;
     }
 
     @RequestMapping(value = Constants.ENDPOINT_IMAGE, method = RequestMethod.GET)
     @ResponseBody
-    public byte[] image(Principal principal,
+    public void image(Principal principal,
+                        HttpServletResponse response,
                         @RequestParam int index) {
 
         logger.info("images root " + principal.getName());
+        response.setContentType(MediaType.IMAGE_JPEG_VALUE);
 
         List<CameraProperty> cameras = camerasProperty.getList();
 
         if (index < 0 || index > cameras.size()) {
-            return getNAImage();
+            logger.error("incorrect camera index");
+            returnNAImage(response);
+            return;
         }
 
         try {
@@ -63,11 +66,11 @@ public class CamerasController {
 
             try (InputStream inputStream = new URL(url).openStream()) {
                 logger.info("returning image");
-                return IOUtils.toByteArray(inputStream);
+                IOUtils.copy(inputStream, response.getOutputStream());
             }
         } catch(Throwable e) {
             logger.error("getting image from camera error", e);
-            return getNAImage();
+            returnNAImage(response);
         }
     }
 }

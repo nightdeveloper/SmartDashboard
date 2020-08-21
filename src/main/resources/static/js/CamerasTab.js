@@ -17,7 +17,7 @@ CamerasTab = function () {
 
         function getView(camera, index) {
             var viewItem = $("<div class=\"w-50 camera-view\">" +
-                "Camera: " + camera.name + ", " +
+                "Camera <b>" + camera.name + "</b> " +
                 "<button type=\"button\" class=\"btn btn-primary\" style='margin-left:50px'" +
                 "  onclick='window.refreshCamera(\"camera" + index + "\", \"image?index=" + index + "\")' >Refresh</button> " +
                 "<img id='camera" + index + "' src='image?index=" + index + "'/>" +

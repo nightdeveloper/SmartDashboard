@@ -39,7 +39,7 @@ Navigation = function () {
             return navItem;
         }
 
-        var nav = $("#upper_nav");
+        var nav = $("#tabs_nav");
         for (var key in elements) {
             nav.append(getNavElement(key));
         }

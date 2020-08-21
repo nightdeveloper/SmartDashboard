@@ -15,55 +15,55 @@
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <div class="container-fluid authBlock">
-        <div class="col">
+    <div id="navigation_bar">
+        <div id="brand_nav">
             <a class="navbar-brand" th:href="@{''}">Dashboard</a>
         </div>
-        <div class="col text-left">
-            <ul class="nav nav-tabs" id="upper_nav">
-            </ul>
-        </div>
-        <div class="col text-left">
-            <ul class="nav" id="content_nav_sensors">
-            </ul>
-        </div>
-        <div class="col text-right">
+
+        <ul class="nav nav-tabs" id="tabs_nav">
+        </ul>
+
+        <ul class="nav" id="content_nav_sensors">
+        </ul>
+
+        <div class="text-right auth_block" id="user_nav">
             <i class="fas fa-user"></i>
 
-            <span class="yandexFirstLetter" th:utext="${#strings.substring(userInfo.get('display_name'),0,1)}">
+            <span class="yandex_first_letter" th:utext="${#strings.substring(userInfo.get('display_name'),0,1)}">
                 </span><span th:utext="${#strings.substring(userInfo.get('display_name'),1)}"> </span>
 
-            <span class="yandexRealName" th:utext="${userInfo.get('real_name')}"> </span>
+            <span class="yandex_real_name" th:utext="${userInfo.get('real_name')}"> </span>
 
-            <a th:href="@{/logoutUser}"><i class="fas fa-sign-out-alt"></i></a>
+            <div class="logout">
+                <a th:href="@{/logoutUser}"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
         </div>
     </div>
 </nav>
 
 <div class="container-fluid dash-content">
-
     <div id="content_sensors" class="hidden full-height">
         <div class="container-fluid full-height">
             <div class="row h-50">
                 <div class="col-4">
-                    <canvas id="temperaturesCanvas" width="100%"></canvas>
+                    <canvas id="temperatures_canvas" width="100%"></canvas>
                 </div>
                 <div class="col-4">
-                    <canvas id="humidityCanvas" width="100%"></canvas>
+                    <canvas id="humidity_canvas" width="100%"></canvas>
                 </div>
-                <div class="col-4 textCol" id="batteryStatus">
+                <div class="col-4 textCol" id="battery_status">
 
                 </div>
             </div>
             <div class="row nextRow h-50">
                 <div class="col-4">
-                    <canvas id="pressureCanvas" width="100%"></canvas>
+                    <canvas id="pressure_canvas" width="100%"></canvas>
                 </div>
                 <div class="col-4">
-                    <canvas id="linkQualityCanvas" width="100%"></canvas>
+                    <canvas id="linkQuality_canvas" width="100%"></canvas>
                 </div>
                 <div class="col-4">
-                    <canvas id="batteryCanvas"></canvas>
+                    <canvas id="battery_canvas"></canvas>
                 </div>
             </div>
         </div>

@@ -14,35 +14,70 @@ body, html {
     padding: 5px;
 }
 
-.yandexFirstLetter {
+.yandex_first_letter {
     color: red;
 }
 
-.yandexRealName {
+.yandex_real_name {
     padding-left: 10px;
 }
 
-.authBlock {
-    color: white;
-}
-
-.authBlock .fa-user {
+.auth_block .fa-user {
     margin-right: 10px;
 }
 
-.authBlock .fa-sign-out-alt {
+.auth_block .fa-sign-out-alt {
     margin-left: 20px;
 }
 
-#upper_nav {
-}
-
-#upper_nav a {
+#navigation_bar {
+    display: flex;
+    width: 100%;
     color: white;
 }
 
-#upper_nav a.active {
+#navbar-brand {
+    flex-grow: 1;
+}
+
+#tabs_nav {
+    flex-grow: 1;
+}
+
+#tabs_nav a {
+    color: white;
+}
+
+#tabs_nav .nav-item {
+    margin-bottom: 0;
+}
+
+#tabs_nav.nav-tabs {
+    border-bottom: none;
+}
+
+#tabs_nav a {
+    border-bottom: 1px solid #dee2e6;
+}
+
+#tabs_nav a.active {
     color: black;
+    border-bottom: none;
+    border-bottom: 1px solid white;
+}
+
+#brand_nav {
+    flex-grow: 1;
+}
+
+#user_nav {
+    flex-grow: 2;
+    align-self: center;
+}
+
+#user_nav .logout {
+    float: right;
+    margin-top: 2px;
 }
 
 .navLabel {
@@ -51,10 +86,11 @@ body, html {
 
 .dash-content {
     position: absolute;
-    top: 60px;
+    top: 0;
     left: 0;
     right: 0;
-    bottom: 15px;
+    bottom: 0;
+    padding-top: 50px;
 }
 
 .hidden {
@@ -66,6 +102,19 @@ body, html {
 }
 
 .navbar-brand {
+}
+
+#battery_status {
+    font-size: 10pt;
+}
+
+#battery_status p {
+    margin: 0;
+}
+
+#content_nav_sensors {
+    float: left;
+    margin-top: 2px;
 }
 
 #content_nav_sensors a {

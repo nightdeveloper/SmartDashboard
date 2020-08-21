@@ -38,22 +38,22 @@ window.onload = function () {
 
     createSensorsNavigation();
 
-    var temperatureChart = new AverageChart("temperaturesCanvas", telemetryTemperatures, "Temperature averages");
+    var temperatureChart = new AverageChart("temperatures_canvas", telemetryTemperatures, "Temperature averages");
     temperatureChart.render();
 
-    var humidityChart = new AverageChart("humidityCanvas", telemetryHumidity, "Humidity averages");
+    var humidityChart = new AverageChart("humidity_canvas", telemetryHumidity, "Humidity averages");
     humidityChart.render();
 
-    var pressureChart = new AverageChart("pressureCanvas", telemetryPressure, "Pressure averages");
+    var pressureChart = new AverageChart("pressure_canvas", telemetryPressure, "Pressure averages");
     pressureChart.render();
 
-    var linkQualityChart = new AverageChart("linkQualityCanvas", telemetryLinkQuality, "Link quality averages");
+    var linkQualityChart = new AverageChart("linkQuality_canvas", telemetryLinkQuality, "Link quality averages");
     linkQualityChart.render();
 
-    var batteryChart = new AverageChart("batteryCanvas", telemetryBattery, "Battery chart");
+    var batteryChart = new AverageChart("battery_canvas", telemetryBattery, "Battery chart");
     batteryChart.render();
 
-    var batteryStatus = new BatteryStatus("batteryStatus", telemetryBatteryStatus, "Battery status");
+    var batteryStatus = new BatteryStatus("battery_status", telemetryBatteryStatus, "Battery status");
     batteryStatus.render();
 
     var camerasTab = new CamerasTab();

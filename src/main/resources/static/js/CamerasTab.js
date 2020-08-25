@@ -1,6 +1,6 @@
 CamerasTab = function () {
 
-    window.refreshCamera = function(id, url) {
+    window.refreshCamera = function (id, url) {
         $("#" + id).attr('src', url + "&" + new Date().getMilliseconds());
     }
 
@@ -16,14 +16,16 @@ CamerasTab = function () {
         }
 
         function getView(camera, index) {
-            var viewItem = $("<div class=\"w-50 camera-view\">" +
+            var viewItem = $("<div class=\"w-50 camera_view\">" +
                 "Camera <b>" + camera.name + "</b> " +
                 "<button type=\"button\" class=\"btn btn-primary\" style='margin-left:50px'" +
                 "  onclick='window.refreshCamera(\"camera" + index + "\", \"image?index=" + index + "\")' >Refresh</button> " +
+                "<a href='image?index=" + index + "' target='_blank'>" +
                 "<img id='camera" + index + "' src='image?index=" + index + "'/>" +
+                "</a>" +
                 "</div>");
 
-            console.log("camera name = " + camera.name +", index = " + index);
+            console.log("camera name = " + camera.name + ", index = " + index);
 
             return viewItem;
         }

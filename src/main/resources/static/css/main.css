@@ -129,16 +129,16 @@ body, html {
     padding-top: 10px;
 }
 
-.camera-view {
+.camera_view {
     float: left;
     padding: 10px;
 }
 
-.camera-view img {
+.camera_view img {
     width: 100%;
 }
 
-.camera-width {
+.camera_width {
     width: 100%;
 }
 
@@ -185,6 +185,10 @@ body, html {
     }
 
     .w-50 {
-        width: auto;
+        width: auto !important;
+    }
+
+    .camera_view img {
+        margin-top: 20px;
     }
 }

@@ -135,6 +135,10 @@ body, html {
 }
 
 .camera_view img {
+    margin-top: 20px;
+}
+
+.camera_view img {
     width: 100%;
 }
 
@@ -186,9 +190,5 @@ body, html {
 
     .w-50 {
         width: auto !important;
-    }
-
-    .camera_view img {
-        margin-top: 20px;
     }
 }

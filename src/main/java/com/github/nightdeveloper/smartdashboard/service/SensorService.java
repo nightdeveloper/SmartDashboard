@@ -4,7 +4,7 @@ import com.github.nightdeveloper.smartdashboard.common.SortDirection;
 import com.github.nightdeveloper.smartdashboard.common.Utils;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
-import com.github.nightdeveloper.smartdashboard.repository.AggregationRepository;
+import com.github.nightdeveloper.smartdashboard.repository.SensorAggregationRepository;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -20,10 +20,10 @@ import java.util.Map;
 @Service
 public class SensorService {
 
-    private final AggregationRepository aggregationRepository;
+    private final SensorAggregationRepository sensorAggregationRepository;
 
-    public SensorService(AggregationRepository aggregationRepository) {
-        this.aggregationRepository = aggregationRepository;
+    public SensorService(SensorAggregationRepository sensorAggregationRepository) {
+        this.sensorAggregationRepository = sensorAggregationRepository;
     }
 
     private List<AverageDeviceValueDTO> roundAverages(List<AverageDeviceValueDTO> values) {
@@ -96,15 +96,15 @@ public class SensorService {
     }
 
     public List<AverageDeviceValueDTO> getLastTemperatures() {
-        return roundAverages(aggregationRepository.getAverages("temperature", 1));
+        return roundAverages(sensorAggregationRepository.getAverages("temperature", 1));
     }
 
     public List<AverageDeviceValueDTO> getLastHumidity() {
-        return roundAverages(aggregationRepository.getAverages("humidity", 1));
+        return roundAverages(sensorAggregationRepository.getAverages("humidity", 1));
     }
 
     public List<AverageDeviceValueDTO> getLastPressure() {
-        List<AverageDeviceValueDTO> results = aggregationRepository.getAverages("pressure", 1);
+        List<AverageDeviceValueDTO> results = sensorAggregationRepository.getAverages("pressure", 1);
 
         results.forEach(valueDTO -> valueDTO.setAverage((double) Math.round(valueDTO.getAverage() * 0.750062)));
 
@@ -112,11 +112,11 @@ public class SensorService {
     }
 
     public List<AverageDeviceValueDTO> getLastBattery() {
-        return roundAverages(smooth(aggregationRepository.getAverages("voltage", 7), 20));
+        return roundAverages(smooth(sensorAggregationRepository.getAverages("voltage", 7), 20));
     }
 
     public List<AverageDeviceValueDTO> getLastLinkQuality() {
-        return roundAverages(aggregationRepository.getAverages("linkquality", 1));
+        return roundAverages(sensorAggregationRepository.getAverages("linkquality", 1));
     }
 
     public Map<String, BatteryStatusDTO> getBatteryStatus(List<AverageDeviceValueDTO> values) {

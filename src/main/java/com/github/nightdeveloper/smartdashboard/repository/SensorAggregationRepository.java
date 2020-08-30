@@ -21,14 +21,14 @@ import java.util.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Repository
-public class AggregationRepository {
+public class SensorAggregationRepository {
 
-    private static final Logger logger = LogManager.getLogger(AggregationRepository.class);
+    private static final Logger logger = LogManager.getLogger(SensorAggregationRepository.class);
 
     private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public AggregationRepository(MongoTemplate mongoTemplate) {
+    public SensorAggregationRepository(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
     }
 

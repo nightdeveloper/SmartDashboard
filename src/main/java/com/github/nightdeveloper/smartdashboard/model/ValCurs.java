@@ -19,7 +19,7 @@ public class ValCurs {
 
     @JacksonXmlProperty(localName = "Valute")
     @JacksonXmlElementWrapper(useWrapping = false)
-    private List<Valute> valute;
+    private List<SingleValute> valute;
 
     public ValCurs() {
     }
@@ -40,11 +40,11 @@ public class ValCurs {
         this.name = name;
     }
 
-    public List<Valute> getValute() {
+    public List<SingleValute> getValute() {
         return valute;
     }
 
-    public void setValute(List<Valute> valute) {
+    public void setValute(List<SingleValute> valute) {
         this.valute = valute;
     }
 

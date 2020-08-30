@@ -2,7 +2,7 @@ package com.github.nightdeveloper.smartdashboard.model;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
-public class Valute {
+public class SingleValute {
 
     @JacksonXmlProperty(localName = "ID", isAttribute = true)
     private String id;
@@ -22,7 +22,7 @@ public class Valute {
     @JacksonXmlProperty(localName = "Value")
     private String value;
 
-    public Valute() {
+    public SingleValute() {
     }
 
     public String getId() {

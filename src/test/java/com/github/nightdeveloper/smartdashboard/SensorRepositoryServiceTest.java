@@ -4,7 +4,7 @@ import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
 import com.github.nightdeveloper.smartdashboard.entity.ComfortSensor;
 import com.github.nightdeveloper.smartdashboard.entity.Sensor;
-import com.github.nightdeveloper.smartdashboard.repository.AggregationRepository;
+import com.github.nightdeveloper.smartdashboard.repository.SensorAggregationRepository;
 import com.github.nightdeveloper.smartdashboard.repository.SensorRepository;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
 import org.apache.logging.log4j.LogManager;
@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
-class RepositoryServiceTest {
+class SensorRepositoryServiceTest {
 
-  private static final Logger logger = LogManager.getLogger(RepositoryServiceTest.class);
+  private static final Logger logger = LogManager.getLogger(SensorRepositoryServiceTest.class);
 
   public static final Long DAY_MILLISECONDS = 24 * 60 * 60 * 1000L;
 
@@ -35,7 +35,7 @@ class RepositoryServiceTest {
   private SensorService sensorService;
 
   @Autowired
-  private AggregationRepository aggregationRepository;
+  private SensorAggregationRepository sensorAggregationRepository;
 
   @Test
   void contextLoads() {
@@ -49,7 +49,7 @@ class RepositoryServiceTest {
     sensorRepository.deleteAll(sensorRepository.findByDeviceId("test_battery"));
   }
 
-  //@BeforeEach
+  @BeforeEach
   void prepareTestData() {
     clearTestData();
 

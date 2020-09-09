@@ -3,6 +3,7 @@ package com.github.nightdeveloper.smartdashboard.entity;
 import org.springframework.data.annotation.Id;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class Valute {
@@ -11,7 +12,7 @@ public class Valute {
     protected String id;
     protected String charCode;
     protected BigDecimal value;
-    protected Date date;
+    protected LocalDate date;
 
     public Valute() {
     }
@@ -40,11 +41,11 @@ public class Valute {
         this.value = value;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

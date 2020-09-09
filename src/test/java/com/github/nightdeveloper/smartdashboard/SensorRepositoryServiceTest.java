@@ -1,5 +1,6 @@
 package com.github.nightdeveloper.smartdashboard;
 
+import com.github.nightdeveloper.smartdashboard.constants.Profiles;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
 import com.github.nightdeveloper.smartdashboard.entity.ComfortSensor;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @SpringBootTest
+@ActiveProfiles(profiles = Profiles.TEST)
 class SensorRepositoryServiceTest {
 
   private static final Logger logger = LogManager.getLogger(SensorRepositoryServiceTest.class);

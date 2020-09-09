@@ -2,6 +2,7 @@ package com.github.nightdeveloper.smartdashboard;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.nightdeveloper.smartdashboard.common.Constants;
+import com.github.nightdeveloper.smartdashboard.constants.Profiles;
 import com.github.nightdeveloper.smartdashboard.repository.SensorRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -22,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles(profiles = Profiles.TEST)
 public class TelemetryControllerTest {
 
     @Autowired

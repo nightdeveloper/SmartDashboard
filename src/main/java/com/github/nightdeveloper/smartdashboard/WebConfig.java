@@ -4,11 +4,13 @@ import com.github.nightdeveloper.smartdashboard.common.Constants;
 import com.github.nightdeveloper.smartdashboard.common.oauth2.YandexAuthorizationRequestResolver;
 import com.github.nightdeveloper.smartdashboard.common.oauth2.YandexOAuth2UserService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 
 @Configuration
+@EnableScheduling
 public class WebConfig extends WebSecurityConfigurerAdapter {
 
     ClientRegistrationRepository clientRegistrationRepository;

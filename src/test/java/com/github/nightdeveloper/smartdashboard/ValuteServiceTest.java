@@ -1,11 +1,13 @@
 package com.github.nightdeveloper.smartdashboard;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.github.nightdeveloper.smartdashboard.constants.Profiles;
 import com.github.nightdeveloper.smartdashboard.entity.Valute;
 import com.github.nightdeveloper.smartdashboard.model.SingleValute;
 import com.github.nightdeveloper.smartdashboard.model.ValCurs;
 import com.github.nightdeveloper.smartdashboard.repository.ValuteAggregationRepository;
 import com.github.nightdeveloper.smartdashboard.repository.ValuteRepository;
+import com.github.nightdeveloper.smartdashboard.service.SchedulerService;
 import com.github.nightdeveloper.smartdashboard.service.ValuteService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,20 +20,19 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StreamUtils;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @SpringBootTest
+@ActiveProfiles(profiles = Profiles.TEST)
 public class ValuteServiceTest {
 
     private static final Logger logger = LogManager.getLogger(ValuteServiceTest.class);
@@ -65,18 +66,13 @@ public class ValuteServiceTest {
 
         Valute data1 = new Valute();
         data1.setCharCode(TEST_VALUTE_CHARCODE);
-        data1.setDate(new Date());
+        data1.setDate(LocalDate.now());
         data1.setValue(new BigDecimal("1.2345"));
         valuteRepository.save(data1);
 
         Valute data2 = new Valute();
         data2.setCharCode(TEST_VALUTE_CHARCODE);
-        data2.setDate(Date.from(
-                LocalDate.now()
-                        .atStartOfDay()
-                        .minus(1, ChronoUnit.DAYS)
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant()));
+        data2.setDate(LocalDate.now());
         data2.setValue(new BigDecimal("2.3456"));
         valuteRepository.save(data2);
     }
@@ -97,7 +93,7 @@ public class ValuteServiceTest {
 
         Valute data1 = new Valute();
         data1.setCharCode(TEST_VALUTE_CHARCODE_2);
-        data1.setDate(new Date());
+        data1.setDate(LocalDate.now());
         data1.setValue(new BigDecimal("3.4567"));
         valuteRepository.save(data1);
 
@@ -119,7 +115,7 @@ public class ValuteServiceTest {
 
         Valute data1 = new Valute();
         data1.setCharCode(TEST_VALUTE_CHARCODE_2);
-        data1.setDate(new Date());
+        data1.setDate(LocalDate.now());
         data1.setValue(new BigDecimal("4.5678"));
         valuteRepository.save(data1);
 
@@ -192,5 +188,18 @@ public class ValuteServiceTest {
         Assertions.assertNotNull(valute.getValue());
         Assertions.assertEquals("54,5904", valute.getValue());
         Assertions.assertEquals(new BigDecimal("54.5904"), valuteService.parseValue(valute.getValue()));
+    }
+
+    @Test
+    public void testGetDataFromCBR() {
+        ValCurs valCurs  = valuteService.requestCurrentValute();
+        Assertions.assertNotNull(valCurs);
+        Assertions.assertTrue(valCurs.getValute().size() > 0);
+    }
+
+    @Test
+    public void testSaveDateToCBR() {
+        ValCurs valCurs  = valuteService.requestCurrentValute();
+        valuteService.saveFavouriteValuteRate(valCurs);
     }
 }

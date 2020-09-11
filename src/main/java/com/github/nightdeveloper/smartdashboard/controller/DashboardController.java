@@ -6,6 +6,7 @@ import com.github.nightdeveloper.smartdashboard.common.Utils;
 import com.github.nightdeveloper.smartdashboard.constants.ValuteConst;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.property.CamerasProperty;
+import com.github.nightdeveloper.smartdashboard.property.WeatherProperty;
 import com.github.nightdeveloper.smartdashboard.repository.ValuteAggregationRepository;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
 import org.apache.logging.log4j.LogManager;
@@ -31,13 +32,16 @@ public class DashboardController {
     final private Devices devices;
     final private CamerasProperty camerasProperty;
     final private ValuteAggregationRepository valuteAggregationRepository;
+    final private WeatherProperty weatherProperty;
 
     public DashboardController(SensorService sensorService, Devices devices, CamerasProperty camerasProperty,
-                               ValuteAggregationRepository valuteAggregationRepository) {
+                               ValuteAggregationRepository valuteAggregationRepository,
+                               WeatherProperty weatherProperty) {
         this.sensorService = sensorService;
         this.devices = devices;
         this.camerasProperty = camerasProperty;
         this.valuteAggregationRepository = valuteAggregationRepository;
+        this.weatherProperty = weatherProperty;
     }
 
     @RequestMapping(value = Constants.ENDPOINT_DASHBOARD, method = RequestMethod.GET)
@@ -74,9 +78,12 @@ public class DashboardController {
         // rate list
         model.put("rates", valuteAggregationRepository.getValuteByPeriod(
                 new ArrayList<ValuteConst>() {{
-                        add(ValuteConst.USD);
-                        add(ValuteConst.EUR);
-                    }}, 31));
+                    add(ValuteConst.USD);
+                    add(ValuteConst.EUR);
+                }}, 31));
+
+        // weather
+        model.put("weatherProperty", weatherProperty);
 
         // cameras
         model.put("cameras", camerasProperty.getList());

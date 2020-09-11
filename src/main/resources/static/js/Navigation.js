@@ -3,6 +3,7 @@ Navigation = function () {
     var elements = {
         "sensors": "Sensors",
         "rates": "Currency Rates",
+        "weather": "Weather",
         "cameras": "Cameras",
         "discovery": "Discovery"
     };

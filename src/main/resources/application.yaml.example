@@ -53,6 +53,12 @@ devices:
       name: 'Plug'
       className: 'PlugSensor'
 
+weather:
+  gismeteoHash: "abcDEF"
+  forecaId: 123
+  yandexCid1: 234
+  yandexCid2: 345
+
 logging.level:
   root: 'INFO'
 #  org.springframework.security.oauth2: 'DEBUG'

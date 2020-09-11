@@ -3,8 +3,10 @@ package com.github.nightdeveloper.smartdashboard.controller;
 import com.github.nightdeveloper.smartdashboard.common.Constants;
 import com.github.nightdeveloper.smartdashboard.common.Devices;
 import com.github.nightdeveloper.smartdashboard.common.Utils;
+import com.github.nightdeveloper.smartdashboard.constants.ValuteConst;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.property.CamerasProperty;
+import com.github.nightdeveloper.smartdashboard.repository.ValuteAggregationRepository;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -27,11 +30,14 @@ public class DashboardController {
     final private SensorService sensorService;
     final private Devices devices;
     final private CamerasProperty camerasProperty;
+    final private ValuteAggregationRepository valuteAggregationRepository;
 
-    public DashboardController(SensorService sensorService, Devices devices, CamerasProperty camerasProperty) {
+    public DashboardController(SensorService sensorService, Devices devices, CamerasProperty camerasProperty,
+                               ValuteAggregationRepository valuteAggregationRepository) {
         this.sensorService = sensorService;
         this.devices = devices;
         this.camerasProperty = camerasProperty;
+        this.valuteAggregationRepository = valuteAggregationRepository;
     }
 
     @RequestMapping(value = Constants.ENDPOINT_DASHBOARD, method = RequestMethod.GET)
@@ -48,7 +54,8 @@ public class DashboardController {
         if (token.getPrincipal() != null) {
             model.put("userInfo", token.getPrincipal().getAttributes());
         }
-        
+
+        // smart home
         model.put("devices", devices.getDevices());
 
         model.put("temperatures", sensorService.getLastTemperatures());
@@ -64,6 +71,14 @@ public class DashboardController {
         model.put("battery", lastBattery);
         model.put("batteryStatus", sensorService.getBatteryStatus(lastBattery));
 
+        // rate list
+        model.put("rates", valuteAggregationRepository.getValuteByPeriod(
+                new ArrayList<ValuteConst>() {{
+                        add(ValuteConst.USD);
+                        add(ValuteConst.EUR);
+                    }}, 31));
+
+        // cameras
         model.put("cameras", camerasProperty.getList());
 
         return modelAndView;

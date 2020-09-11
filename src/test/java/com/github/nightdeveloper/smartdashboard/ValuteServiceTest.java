@@ -120,7 +120,7 @@ public class ValuteServiceTest {
         valuteRepository.save(data1);
 
         List<Valute> valuteList =
-                valuteAggregationRepository.getValuteByPeriod(
+                valuteAggregationRepository.getValuteByPeriodAndCharCodes(
                         new ArrayList<String>() {{
                             add(TEST_VALUTE_CHARCODE);
                             add(TEST_VALUTE_CHARCODE_2);

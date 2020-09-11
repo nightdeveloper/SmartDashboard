@@ -1,5 +1,6 @@
 package com.github.nightdeveloper.smartdashboard.repository;
 
+import com.github.nightdeveloper.smartdashboard.constants.ValuteConst;
 import com.github.nightdeveloper.smartdashboard.dto.UniqueDateDTO;
 import com.github.nightdeveloper.smartdashboard.entity.Valute;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
@@ -34,10 +36,23 @@ public class ValuteAggregationRepository {
     }
 
     public List<Valute> getValuteByPeriod(String charCode, int days) {
-        return getValuteByPeriod(new ArrayList<String>() {{ add(charCode); }}, days);
+        return getValuteByPeriodAndCharCodes(new ArrayList<String>() {{ add(charCode); }}, days);
     }
 
-    public List<Valute> getValuteByPeriod(List<String> charCode, int days) {
+    public List<Valute> getValuteByPeriod(ValuteConst valute, int days) {
+        return getValuteByPeriodAndCharCodes(new ArrayList<String>() {{ add(valute.getCode()); }}, days);
+    }
+
+    public List<Valute> getValuteByPeriod(List<ValuteConst> charCode, int days) {
+
+        List<String> charCodes = charCode.stream()
+                .map(ValuteConst::getCode)
+                .collect(Collectors.toList());
+
+        return getValuteByPeriodAndCharCodes(charCodes, days);
+    }
+
+    public List<Valute> getValuteByPeriodAndCharCodes(List<String> charCodes, int days) {
 
         long timeStart = System.currentTimeMillis();
 
@@ -45,7 +60,7 @@ public class ValuteAggregationRepository {
         LocalDateTime minDate;
 
         Aggregation getMaxDate = newAggregation(
-                match(Criteria.where("charCode").in(charCode)),
+                match(Criteria.where("charCode").in(charCodes)),
                 group().max("date").as("uniqueDate"),
                 project("uniqueDate")
                         .andExclude("_id")
@@ -69,7 +84,7 @@ public class ValuteAggregationRepository {
                 .atZone(ZoneId.systemDefault()).toLocalDateTime();
 
         Aggregation selectAggregation = newAggregation(
-                match(Criteria.where("charCode").in(charCode)
+                match(Criteria.where("charCode").in(charCodes)
                         .and("date").gte(minDate)
                 ),
                 sort(Sort.Direction.ASC, "date")

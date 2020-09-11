@@ -2,6 +2,7 @@ Navigation = function () {
 
     var elements = {
         "sensors": "Sensors",
+        "rates": "Currency Rates",
         "cameras": "Cameras",
         "discovery": "Discovery"
     };

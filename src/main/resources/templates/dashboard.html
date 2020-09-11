@@ -92,6 +92,14 @@
         </script>
     </div>
 
+    <div id="content_rates" class="hidden full-height">
+        <canvas id="rates_canvas" width="100%"></canvas>
+
+        <script th:inline="javascript">
+            rates = [[${rates}]];
+        </script>
+    </div>
+
     <div id="content_cameras" class="hidden">
         <script th:inline="javascript">
             cameras = [[${cameras}]];
@@ -117,7 +125,9 @@
 <script type="text/javascript" th:src="@{/js/Navigation.js}"></script>
 
 <script type="text/javascript" th:src="@{/js/AverageChart.js}"></script>
+<script type="text/javascript" th:src="@{/js/CurrencyChart.js}"></script>
 <script type="text/javascript" th:src="@{/js/BatteryStatus.js}"></script>
+
 <script type="text/javascript" th:src="@{/js/CamerasTab.js}"></script>
 <script type="text/javascript" th:src="@{/js/DiscoveryTab.js}"></script>
 <script type="text/javascript" th:src="@{/js/scripts.js}"></script>

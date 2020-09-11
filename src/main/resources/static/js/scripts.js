@@ -83,4 +83,7 @@ window.onload = function () {
 
         batteryStatus.render(val);
     }
+
+    var ratesChart = new CurrencyChart("rates_canvas", rates, "USD Currency Rates");
+    ratesChart.render();
 };

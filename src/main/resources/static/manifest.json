@@ -1,0 +1,23 @@
+{
+  "name": "SC Dashboard",
+  "short_name": "dashboard",
+  "theme_color": "#cecece",
+  "background_color": "#0000FF",
+  "display": "minimal-ui",
+  "orientation": "portrait",
+  "start_url": "./dashboard",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "./images/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./images/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "splash_pages": null
+}

@@ -32,7 +32,6 @@ function createSensorsNavigation() {
 }
 
 window.onload = function () {
-
     var navigation = new Navigation();
     navigation.init();
 
@@ -62,7 +61,7 @@ window.onload = function () {
     var discoveryTab = new DiscoveryTab();
     discoveryTab.init();
 
-    window.updateSensorsNavigationLocation = function(locationValue) {
+    window.updateSensorsNavigationLocation = function (locationValue) {
 
         var val = locationValue === "all" ? undefined : locationValue;
 

@@ -29,7 +29,14 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
 
-                .authorizeRequests().antMatchers("/", Constants.REST_TELEMETRY).permitAll()
+                .authorizeRequests()
+                    .antMatchers("/",
+                            Constants.REST_TELEMETRY,
+                            Constants.MANIFEST,
+                            Constants.SERVICE_WORKER,
+                            Constants.STATIC_IMAGES
+                            )
+                    .permitAll()
 
                 .and()
 

@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -45,10 +44,15 @@ public class DiscoveryController {
         return result;
     }
 
-    private static void logToStream(HttpServletResponse response, String str) throws IOException {
+    private static void logToStream(HttpServletResponse response, String str) {
         logger.info(str);
-        response.getOutputStream().print(str + "<br/>");
-        response.getOutputStream().flush();
+
+        try {
+            response.getOutputStream().print(str + "<br/>");
+            response.getOutputStream().flush();
+        } catch(IOException e) {
+            // it's ok
+        }
     }
 
     @RequestMapping(value = Constants.ENDPOINT_DISCOVERY, method = RequestMethod.GET)
@@ -70,25 +74,25 @@ public class DiscoveryController {
 
             logToStream(response, "querying interface " + address.getHostAddress());
 
-            Service discoveryService = Service.fromName(Service.SERVICE_QUERY);
-            Query serviceQuery = Query.createFor(discoveryService, Domain.LOCAL);
-            Set<Instance> serviceInstances = serviceQuery.runOnce(address);
-            logToStream(response, "got count " + serviceInstances.size());
+            try {
+                Service discoveryService = Service.fromName(Service.SERVICE_QUERY);
+                Query serviceQuery = Query.createFor(discoveryService, Domain.LOCAL);
+                Set<Instance> serviceInstances = serviceQuery.runOnce(address);
+                logToStream(response, "got count " + serviceInstances.size());
 
-            List<String> serviceNames = serviceInstances.stream().map(Instance::getFullName)
-                    .sorted()
-                    .distinct()
-                    .collect(Collectors.toList());
+                List<String> serviceNames = serviceInstances.stream().map(Instance::getFullName)
+                        .sorted()
+                        .distinct()
+                        .collect(Collectors.toList());
 
 
-            for (String serviceName : serviceNames) {
-                logToStream(response, "Discovered service " + serviceName + ":");
+                for (String serviceName : serviceNames) {
+                    logToStream(response, "Discovered service " + serviceName + ":");
 
-                Query instanceQuery = Query.createFor(Service.fromName(serviceName), Domain.LOCAL);
-                Set<Instance> instances = instanceQuery.runOnce(address);
+                    Query instanceQuery = Query.createFor(Service.fromName(serviceName), Domain.LOCAL);
+                    Set<Instance> instances = instanceQuery.runOnce(address);
 
-                instances.forEach(instance -> {
-                    try {
+                    instances.forEach(instance -> {
                         logToStream(response, " - ["
 
                                 + instance.getAddresses().stream()
@@ -106,13 +110,13 @@ public class DiscoveryController {
                                         .collect(Collectors.joining(", "))
                                 : "")
                         );
-                    } catch (IOException e) {
-                        logger.error("instance exception", e);
-                    }
-                });
-
-                logToStream(response, "");
+                    });
+                }
+            } catch (IOException e) {
+                logToStream(response, "net scan error " + e.getMessage());
             }
+
+            logToStream(response, "");
         }
 
         logToStream(response, "discovery finished");

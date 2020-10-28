@@ -4,6 +4,7 @@ import com.github.nightdeveloper.smartdashboard.common.SortDirection;
 import com.github.nightdeveloper.smartdashboard.common.Utils;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
+import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
 import com.github.nightdeveloper.smartdashboard.repository.SensorAggregationRepository;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +13,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class SensorService {
@@ -181,5 +179,13 @@ public class SensorService {
         }
 
         return results;
+    }
+
+    public List<SwitchStateDTO> getSwitchStates() {
+        List<SwitchStateDTO> result = sensorAggregationRepository.getSwitchLastStates();
+
+        result.sort(Comparator.comparing(SwitchStateDTO::getDeviceId));
+
+        return result;
     }
 }

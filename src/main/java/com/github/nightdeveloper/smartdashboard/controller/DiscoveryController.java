@@ -30,12 +30,14 @@ public class DiscoveryController {
 
     final static Logger logger = LogManager.getLogger(DiscoveryController.class);
 
-    private static List<InetAddress> getLocalAddresses() throws SocketException {
+    private static List<InetAddress> getLocalAddresses(HttpServletResponse response)
+            throws IOException {
         Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
 
         List<InetAddress> result = new ArrayList<>();
         while (networkInterfaces.hasMoreElements()) {
             for (InterfaceAddress interfaceAddress : networkInterfaces.nextElement().getInterfaceAddresses()) {
+                logToStream(response, "enumerated interface " + interfaceAddress.getAddress().getHostAddress());
                 result.add(interfaceAddress.getAddress());
             }
         }
@@ -62,7 +64,7 @@ public class DiscoveryController {
 
         logToStream(response, "Using hostname " + hostname);
 
-        List<InetAddress> addresses = getLocalAddresses();
+        List<InetAddress> addresses = getLocalAddresses(response);
 
         for (InetAddress address : addresses) {
 
@@ -112,5 +114,7 @@ public class DiscoveryController {
                 logToStream(response, "");
             }
         }
+
+        logToStream(response, "discovery finished");
     }
 }

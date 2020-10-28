@@ -1,6 +1,8 @@
 package com.github.nightdeveloper.smartdashboard.repository;
 
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
+import com.github.nightdeveloper.smartdashboard.dto.IdResult;
+import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
 import com.github.nightdeveloper.smartdashboard.dto.UniqueDateDTO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -189,4 +191,58 @@ public class SensorAggregationRepository {
         return resultsSpring;
     }
 
+    public List<SwitchStateDTO> getSwitchLastStates() {
+
+        long timeStart = System.currentTimeMillis();
+        logger.info("getting state devices list");
+
+        Aggregation devicesListAggregation = newAggregation(
+                match(Criteria.where("state").ne(null)),
+                project("deviceId"),
+                group("deviceId")
+                );
+
+        AggregationResults<IdResult> devicesListAggregationResult = mongoTemplate
+                .aggregate(devicesListAggregation, "sensor", IdResult.class);
+
+
+        final List<IdResult> devicesListResult = devicesListAggregationResult.getMappedResults();
+
+        logger.info("got " + (System.currentTimeMillis() - timeStart) + " nano (items: "
+                + devicesListResult.size() + ")");
+
+        List<SwitchStateDTO> result = new ArrayList<>();
+
+        for(IdResult deviceId : devicesListResult) {
+            timeStart = System.currentTimeMillis();
+
+            logger.info("getting device state by id " + deviceId.get_id());
+
+            Aggregation lastDeviceStateAggregation = newAggregation(
+                    match(Criteria.where("deviceId").is(deviceId.get_id())),
+
+                    project()
+                            .and("deviceId").as("deviceId")
+                            .and("date").as("date")
+                            .and("state").as("state")
+                            .andExclude("_id"),
+
+                    sort(Sort.Direction.DESC, "date"),
+
+                    limit(1)
+            );
+
+            AggregationResults<SwitchStateDTO> deviceStateAggregationResult = mongoTemplate
+                    .aggregate(lastDeviceStateAggregation, "sensor", SwitchStateDTO.class);
+
+            final List<SwitchStateDTO> deviceStateResult = deviceStateAggregationResult.getMappedResults();
+
+            result.addAll(deviceStateResult);
+
+            logger.info("got " + (System.currentTimeMillis() - timeStart) + " nano (items: "
+                    + devicesListResult.size() + ")");
+        }
+
+        return result;
+    }
 }

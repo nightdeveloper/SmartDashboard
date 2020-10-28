@@ -79,6 +79,7 @@
             telemetryPressure = [[${pressure}]];
             telemetryLinkQuality = [[${linkQuality}]];
             telemetryBattery = [[${battery}]];
+            switchStatus = [[${switchStatus}]];
 
             telemetryBatteryStatus = /*[[${batteryStatus}]]*/ {
                 "test": {
@@ -186,7 +187,7 @@
 
 <script type="text/javascript" th:src="@{/js/AverageChart.js}"></script>
 <script type="text/javascript" th:src="@{/js/CurrencyChart.js}"></script>
-<script type="text/javascript" th:src="@{/js/BatteryStatus.js}"></script>
+<script type="text/javascript" th:src="@{/js/OverallStatus.js}"></script>
 
 <script type="text/javascript" th:src="@{/js/CamerasTab.js}"></script>
 <script type="text/javascript" th:src="@{/js/DiscoveryTab.js}"></script>

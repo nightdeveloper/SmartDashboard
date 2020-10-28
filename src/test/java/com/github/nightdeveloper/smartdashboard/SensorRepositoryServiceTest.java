@@ -3,7 +3,9 @@ package com.github.nightdeveloper.smartdashboard;
 import com.github.nightdeveloper.smartdashboard.constants.Profiles;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
+import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
 import com.github.nightdeveloper.smartdashboard.entity.ComfortSensor;
+import com.github.nightdeveloper.smartdashboard.entity.PlugSensor;
 import com.github.nightdeveloper.smartdashboard.entity.Sensor;
 import com.github.nightdeveloper.smartdashboard.repository.SensorAggregationRepository;
 import com.github.nightdeveloper.smartdashboard.repository.SensorRepository;
@@ -50,6 +52,7 @@ class SensorRepositoryServiceTest {
     sensorRepository.deleteAll(sensorRepository.findByDeviceId("test1"));
     sensorRepository.deleteAll(sensorRepository.findByDeviceId("test2"));
     sensorRepository.deleteAll(sensorRepository.findByDeviceId("test_battery"));
+    sensorRepository.deleteAll(sensorRepository.findByDeviceId("test_plug"));
   }
 
   @BeforeEach
@@ -108,6 +111,12 @@ class SensorRepositoryServiceTest {
     data3.setDate(new Date(new Date().getTime() - 2 * DAY_MILLISECONDS));
     data3.setBattery(90L);
     sensorRepository.save((Sensor) data3);
+
+    PlugSensor data4 = new PlugSensor();
+    data4.setDeviceId("test_plug");
+    data4.setDate(new Date());
+    data4.setState("ON");
+    sensorRepository.save((Sensor) data4);
   }
 
   private void assertAverages(List<AverageDeviceValueDTO> results) {
@@ -168,6 +177,17 @@ class SensorRepositoryServiceTest {
 
         Assertions.assertNotNull(batteryStatusDTO.getDateDischarge());
       }
+    }
+  }
+
+  @Test
+  void testSwitchesStatus() {
+    List<SwitchStateDTO> resultsList = sensorService.getSwitchStates();
+
+    for(SwitchStateDTO switchStateDTO : resultsList) {
+      Assertions.assertNotNull(switchStateDTO.getDeviceId());
+      Assertions.assertNotNull(switchStateDTO.getState());
+      Assertions.assertNotNull(switchStateDTO.getDate());
     }
   }
 

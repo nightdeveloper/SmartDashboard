@@ -5,6 +5,7 @@ import com.github.nightdeveloper.smartdashboard.common.Devices;
 import com.github.nightdeveloper.smartdashboard.common.Utils;
 import com.github.nightdeveloper.smartdashboard.constants.ValuteConst;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
+import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
 import com.github.nightdeveloper.smartdashboard.property.CamerasProperty;
 import com.github.nightdeveloper.smartdashboard.property.WeatherProperty;
 import com.github.nightdeveloper.smartdashboard.repository.ValuteAggregationRepository;
@@ -74,13 +75,14 @@ public class DashboardController {
 
         model.put("battery", lastBattery);
         model.put("batteryStatus", sensorService.getBatteryStatus(lastBattery));
+        model.put("switchStatus", sensorService.getSwitchStates());
 
         // rate list
         model.put("rates", valuteAggregationRepository.getValuteByPeriod(
                 new ArrayList<ValuteConst>() {{
                     add(ValuteConst.USD);
                     add(ValuteConst.EUR);
-                }}, 31));
+                }}, 60));
 
         // weather
         model.put("weatherProperty", weatherProperty);

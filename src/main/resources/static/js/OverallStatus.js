@@ -1,4 +1,4 @@
-BatteryStatus = function (divId, batteryData, title) {
+OverallStatus = function (divId, batteryData, switchStatus) {
 
     function getDeviceById(id) {
         for (var i = 0; i < devices.length; i++) {
@@ -11,7 +11,7 @@ BatteryStatus = function (divId, batteryData, title) {
 
     this.render = function (locationValue) {
 
-        var content = "<h5>" + title + ":</h5>";
+        var content = "<h5>Battery status:</h5>";
 
         for (var id in batteryData) {
 
@@ -38,6 +38,37 @@ BatteryStatus = function (divId, batteryData, title) {
             if (data.daysLeft > 0) {
                 content += ", est. " + data.daysLeft + " days left"
             }
+
+            content += "</p>";
+        }
+
+        content += "<h5>Switch status:</h5>";
+
+        for (var id in switchStatus) {
+
+            var status = switchStatus[id];
+
+            var device = getDeviceById(status.deviceId);
+
+            if (!device) {
+                return;
+            }
+
+            if (locationValue && device.location !== locationValue) {
+                continue;
+            }
+
+
+
+            content += "<p>" + (locationValue ? "" : device.location + ": ") + device.name + " "
+                + moment(status.date).format("DD.MM.YYYY") + " ";
+
+            if (status.state === "ON") {
+                content += "<span style='color:green'>ON</span>";
+            } else if (status.state === "OFF") {
+                content += "<span style='color:red'>OFF</span>";
+            } else
+                content += status.state;
 
             content += "</p>";
         }

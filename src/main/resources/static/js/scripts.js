@@ -53,8 +53,8 @@ window.onload = function () {
     var batteryChart = new AverageChart("battery_canvas", telemetryBattery, "Battery chart");
     batteryChart.render();
 
-    var batteryStatus = new BatteryStatus("battery_status", telemetryBatteryStatus, "Battery status");
-    batteryStatus.render();
+    var overallStatus = new OverallStatus("battery_status", telemetryBatteryStatus, switchStatus);
+    overallStatus.render();
 
     var camerasTab = new CamerasTab();
     camerasTab.init();
@@ -81,7 +81,7 @@ window.onload = function () {
         batteryChart.fillAverageDatasets(val);
         batteryChart.update();
 
-        batteryStatus.render(val);
+        overallStatus.render(val);
     }
 
     var ratesChart = new CurrencyChart("rates_canvas", rates, "USD Currency Rates");

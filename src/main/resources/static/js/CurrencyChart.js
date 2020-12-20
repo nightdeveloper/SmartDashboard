@@ -1,5 +1,7 @@
 CurrencyChart = function(canvasId, currencyRates, title) {
 
+    var movingAverageValues = 15;
+
     var config = {
         type: 'line',
         data: {
@@ -80,6 +82,37 @@ CurrencyChart = function(canvasId, currencyRates, title) {
         return that.chart;
     }
 
+    this.movingAvg = function(dataset) {
+        var origData = dataset.data;
+
+        var keys = [];
+        var values = [];
+
+        for (var i = origData.length - 1; i >= 0; i--) {
+            keys.push(origData[i].x);
+            values.push(origData[i].y);
+        }
+
+        var movingAvg = [];
+        while (values.length > movingAverageValues) {
+            avg = R.pipe(R.take(movingAverageValues), R.sum)(values) / movingAverageValues;
+            values = values.slice(1);
+            movingAvg.push(avg.toFixed(4));
+        }
+
+        keys = R.take(keys.length - movingAverageValues)(keys);
+
+        var mappedIndex = R.addIndex(R.map);
+        var data = mappedIndex((val, i) => {
+            return {
+                x: keys[i],
+                y: val
+            }
+        })(movingAvg);
+
+        return data;
+    }
+
     this.fillAverageDatasets = function(locationFilter) {
 
         var datasets = [];
@@ -126,6 +159,15 @@ CurrencyChart = function(canvasId, currencyRates, title) {
             })
 
             datasets.push(datasetsByName[id]);
+
+            datasets.push({
+                label: charCode + " trend line " + movingAverageValues,
+                backgroundColor: "#FFFFFF",
+                borderColor: colors[nextColor++],
+                fill: false,
+                borderDash: [5, 5],
+                data: this.movingAvg(datasetsByName[id])
+            });
         }
 
         config.data.datasets = datasets;

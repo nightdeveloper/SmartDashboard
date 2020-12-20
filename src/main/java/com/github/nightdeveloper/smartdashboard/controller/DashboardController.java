@@ -82,7 +82,7 @@ public class DashboardController {
                 new ArrayList<ValuteConst>() {{
                     add(ValuteConst.USD);
                     add(ValuteConst.EUR);
-                }}, 60));
+                }}, 90));
 
         // weather
         model.put("weatherProperty", weatherProperty);

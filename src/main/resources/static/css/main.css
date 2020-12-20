@@ -164,6 +164,10 @@ body, html {
         height: auto;
     }
 
+    #content_rates.full-height {
+        height: 500px;
+    }
+
     .row {
         flex-direction: column;
     }

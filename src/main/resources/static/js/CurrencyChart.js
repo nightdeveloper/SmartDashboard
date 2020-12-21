@@ -82,6 +82,45 @@ CurrencyChart = function(canvasId, currencyRates, title) {
         return that.chart;
     }
 
+    this.trendLine = function(dataset) {
+        var origData = dataset.data;
+
+        var intervalData = [];
+
+        var maxPeak = undefined;
+        var minPeak = undefined;
+        for (var i = 1; i < origData.length - 1; i++) {
+            var newPoint = {
+                x: origData[i].x,
+                y: origData[i].y
+            }
+
+            // detect max peak
+            if (origData[i+1].y > origData[i].y) {
+                maxPeak = origData[i+1].y;
+            } else if ((origData[i+1].y < origData[i].y) && (typeof maxPeak === 'number')) {
+                newPoint.isMax = true;
+                maxPeak = undefined;
+            }
+
+            // detect min peak
+            if (origData[i+1].y < origData[i].y) {
+                minPeak = origData[i+1].y;
+            } else if ((origData[i+1].y > origData[i].y) && (typeof minPeak === 'number')) {
+                newPoint.isMin = true;
+                minPeak = undefined;
+            }
+
+            if (newPoint.isMin || newPoint.isMax) {
+                intervalData.push(newPoint);
+            }
+
+            console.log(newPoint.y + " " + (newPoint.isMin? "min": "") + (newPoint.isMax? "max" : ""));
+        }
+
+        return intervalData;
+    }
+
     this.movingAvg = function(dataset) {
         var origData = dataset.data;
 
@@ -161,13 +200,23 @@ CurrencyChart = function(canvasId, currencyRates, title) {
             datasets.push(datasetsByName[id]);
 
             datasets.push({
-                label: charCode + " trend line " + movingAverageValues,
+                label: id + " MA (" + movingAverageValues + ")",
                 backgroundColor: "#FFFFFF",
                 borderColor: colors[nextColor++],
                 fill: false,
                 borderDash: [5, 5],
                 data: this.movingAvg(datasetsByName[id])
             });
+
+            /*
+            datasets.push({
+                label: id + " trend line",
+                backgroundColor: "#FFFFFF",
+                borderColor: colors[nextColor++],
+                fill: false,
+                data: this.trendLine(datasetsByName[id])
+            });
+             */
         }
 
         config.data.datasets = datasets;

@@ -29,7 +29,7 @@ users:
 cameras:
   archive:
     path: '/archive'
-    cron: '0 0 12 ? * * *'
+    cron: '0 0 12 * * *'
   list:
     - 
       name: 'camera1'

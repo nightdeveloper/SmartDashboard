@@ -9,9 +9,18 @@ import java.util.List;
 @ConfigurationProperties(prefix="cameras")
 public class CamerasProperty {
 
+    private ArchiveProperty archive;
     private List<CameraProperty> list;
 
     public CamerasProperty() {
+    }
+
+    public ArchiveProperty getArchive() {
+        return archive;
+    }
+
+    public void setArchive(ArchiveProperty archive) {
+        this.archive = archive;
     }
 
     public List<CameraProperty> getList() {
@@ -25,7 +34,8 @@ public class CamerasProperty {
     @Override
     public String toString() {
         return "CamerasProperty{" +
-                "list=" + list +
+                "archive=" + archive +
+                ", list=" + list +
                 '}';
     }
 }

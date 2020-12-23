@@ -37,6 +37,12 @@ public class PropertiesTest {
 
     @Test
     void testCamerasProperty() {
+
+        ArchiveProperty archive = camerasProperty.getArchive();
+        Assertions.assertNotNull(archive);
+        Assertions.assertNotNull(archive.getPath());
+        Assertions.assertNotNull(archive.getCron());
+
         Assertions.assertNotNull(camerasProperty.getList());
 
         for(CameraProperty cameraProperty : camerasProperty.getList()) {

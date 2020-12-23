@@ -15,8 +15,17 @@ public class SchedulerService {
 
     private final ValuteService valuteService;
 
-    public SchedulerService(ValuteService valuteService) {
+    private final ArchiveService archiveService;
+
+    public SchedulerService(ValuteService valuteService, ArchiveService archiveService) {
         this.valuteService = valuteService;
+        this.archiveService = archiveService;
+    }
+
+    @Scheduled(cron = "${cameras.archive.cron}")
+    public void scheduleArchive() {
+        logger.info("scheduleArchive");
+        archiveService.getCamerasAndMoveToArchive();
     }
 
     @Scheduled(fixedDelay = 12 * 60 * 60 * 1000 )

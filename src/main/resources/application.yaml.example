@@ -27,6 +27,9 @@ users:
       login: "yandex_user"
 
 cameras:
+  archive:
+    path: '/archive'
+    cron: '0 0 12 ? * * *'
   list:
     - 
       name: 'camera1'

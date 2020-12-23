@@ -3,6 +3,7 @@ package com.github.nightdeveloper.smartdashboard.controller;
 import com.github.nightdeveloper.smartdashboard.common.Constants;
 import com.github.nightdeveloper.smartdashboard.property.CameraProperty;
 import com.github.nightdeveloper.smartdashboard.property.CamerasProperty;
+import com.github.nightdeveloper.smartdashboard.service.UrlService;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,8 +29,11 @@ public class CamerasController {
 
     private final CamerasProperty camerasProperty;
 
-    public CamerasController(CamerasProperty camerasProperty) {
+    private final UrlService urlService;
+
+    public CamerasController(CamerasProperty camerasProperty, UrlService urlService) {
         this.camerasProperty = camerasProperty;
+        this.urlService = urlService;
     }
 
     private void returnNAImage(HttpServletResponse response) {
@@ -63,11 +67,8 @@ public class CamerasController {
             String url = cameraProperty.getUrl() + cameraProperty.getCurrent();
 
             logger.info("requesting image from " + url);
+            urlService.copyCameraImageToStream(url, response.getOutputStream());
 
-            try (InputStream inputStream = new URL(url).openStream()) {
-                logger.info("returning image");
-                IOUtils.copy(inputStream, response.getOutputStream());
-            }
         } catch(Throwable e) {
             logger.error("getting image from camera error", e);
             returnNAImage(response);

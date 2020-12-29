@@ -10,6 +10,7 @@ import com.github.nightdeveloper.smartdashboard.property.CamerasProperty;
 import com.github.nightdeveloper.smartdashboard.property.WeatherProperty;
 import com.github.nightdeveloper.smartdashboard.repository.ValuteAggregationRepository;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
+import com.github.nightdeveloper.smartdashboard.service.SunService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -30,19 +31,24 @@ public class DashboardController {
     private static final Logger logger = LogManager.getLogger(IndexController.class);
 
     final private SensorService sensorService;
+    final private SunService sunService;
+
     final private Devices devices;
+
     final private CamerasProperty camerasProperty;
-    final private ValuteAggregationRepository valuteAggregationRepository;
     final private WeatherProperty weatherProperty;
+
+    final private ValuteAggregationRepository valuteAggregationRepository;
 
     public DashboardController(SensorService sensorService, Devices devices, CamerasProperty camerasProperty,
                                ValuteAggregationRepository valuteAggregationRepository,
-                               WeatherProperty weatherProperty) {
+                               WeatherProperty weatherProperty, SunService sunService) {
         this.sensorService = sensorService;
         this.devices = devices;
         this.camerasProperty = camerasProperty;
         this.valuteAggregationRepository = valuteAggregationRepository;
         this.weatherProperty = weatherProperty;
+        this.sunService = sunService;
     }
 
     @RequestMapping(value = Constants.ENDPOINT_DASHBOARD, method = RequestMethod.GET)
@@ -86,6 +92,8 @@ public class DashboardController {
 
         // weather
         model.put("weatherProperty", weatherProperty);
+
+        model.put("sunInfo", sunService.getSunInfo());
 
         // cameras
         model.put("cameras", camerasProperty.getList());

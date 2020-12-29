@@ -71,6 +71,12 @@
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>2.11.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.shredzone.commons/commons-suncalc -->
+        <dependency>
+            <groupId>org.shredzone.commons</groupId>
+            <artifactId>commons-suncalc</artifactId>
+            <version>3.4</version>
+        </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.webjars/bootstrap -->
         <dependency>

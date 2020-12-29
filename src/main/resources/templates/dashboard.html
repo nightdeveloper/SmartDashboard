@@ -45,6 +45,9 @@
     </div>
 </nav>
 
+<script type="text/javascript" th:src="@{webjars/momentjs/2.24.0/moment.js}"></script>
+<script type="text/javascript" th:src="@{webjars/moment-timezone/0.5.5/moment-timezone.js}"></script>
+
 <div class="container-fluid dash-content">
     <div id="content_sensors" class="hidden full-height">
         <div class="container-fluid full-height">
@@ -150,6 +153,19 @@
     </div>
 
     <div id="content_weather" class="hidden full-height">
+
+        <script th:inline="javascript">
+            sunInfo = [[${sunInfo}]];
+
+            function formatSunDate(date) {
+                return moment.utc(date).local().format("HH:mm");
+            }
+
+            document.write("<h3>Восход: " + formatSunDate(sunInfo.sunRise) +
+                           ", полдень " + formatSunDate(sunInfo.sunNoon) +
+                           ", закат " + formatSunDate(sunInfo.sunSet) + "</h3>");
+        </script>
+
         <!-- Gismeteo informer START -->
         <link rel="stylesheet" type="text/css"
               href="https://nst1.gismeteo.ru/assets/flat-ui/legacy/css/informer.min.css">
@@ -226,8 +242,6 @@
     </div>
 </div>
 
-<script type="text/javascript" th:src="@{webjars/momentjs/2.24.0/moment.js}"></script>
-<script type="text/javascript" th:src="@{webjars/moment-timezone/0.5.5/moment-timezone.js}"></script>
 <script type="text/javascript" th:src="@{webjars/jquery/3.5.0/jquery.js}"></script>
 <script type="text/javascript" th:src="@{webjars/chartjs/2.9.3/Chart.js}"></script>
 

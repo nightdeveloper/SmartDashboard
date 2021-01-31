@@ -69,21 +69,36 @@ public class DashboardController {
         // smart home
         model.put("devices", devices.getDevices());
 
+        logger.info("getting temperatures");
         model.put("temperatures", sensorService.getLastTemperatures());
+
+        logger.info("getting humidity");
         model.put("humidity", sensorService.getLastHumidity());
+
+        logger.info("getting pressure");
         model.put("pressure", sensorService.getLastPressure());
+
+        logger.info("getting linkQuality");
         model.put("linkQuality", sensorService.getLastLinkQuality());
 
+        logger.info("getting lastBattery");
         List<AverageDeviceValueDTO> lastBattery =
                 sensorService.getLastBattery();
 
+        logger.info("getting VoltageListToPercentageList");
         Utils.batteryVoltageListToPercentageList(lastBattery);
 
+        logger.info("getting battery");
         model.put("battery", lastBattery);
+
+        logger.info("getting batteryStatus");
         model.put("batteryStatus", sensorService.getBatteryStatus(lastBattery));
+
+        logger.info("getting switchStatus");
         model.put("switchStatus", sensorService.getSwitchStates());
 
         // rate list
+        logger.info("getting rates");
         model.put("rates", valuteAggregationRepository.getValuteByPeriod(
                 new ArrayList<ValuteConst>() {{
                     add(ValuteConst.USD);
@@ -93,6 +108,7 @@ public class DashboardController {
         // weather
         model.put("weatherProperty", weatherProperty);
 
+        logger.info("getting sunInfo");
         model.put("sunInfo", sunService.getSunInfo());
 
         // cameras

@@ -1,7 +1,6 @@
 package com.github.nightdeveloper.smartdashboard.repository;
 
 import com.github.nightdeveloper.smartdashboard.constants.ValuteConst;
-import com.github.nightdeveloper.smartdashboard.dto.UniqueDateDTO;
 import com.github.nightdeveloper.smartdashboard.entity.Valute;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,17 +10,16 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
 
 @Repository
 public class ValuteAggregationRepository {
@@ -56,32 +54,26 @@ public class ValuteAggregationRepository {
 
         long timeStart = System.currentTimeMillis();
 
-        LocalDateTime maxDate;
-        LocalDateTime minDate;
+        LocalDate maxDate;
+        LocalDate minDate;
 
-        Aggregation getMaxDate = newAggregation(
-                match(Criteria.where("charCode").in(charCodes)),
-                group().max("date").as("uniqueDate"),
-                project("uniqueDate")
-                        .andExclude("_id")
-        );
+        Query maxDateQuery = new Query();
+        maxDateQuery.addCriteria(Criteria.where("charCode").in(charCodes));
+        maxDateQuery.with(Sort.by(Sort.Direction.DESC, "$natural"));
+        maxDateQuery.limit(1);
 
-        UniqueDateDTO maxDateDTO = mongoTemplate
-                .aggregate(getMaxDate, "valute", UniqueDateDTO.class)
-                .getUniqueMappedResult();
+        List<Valute> maxDateDTOs = mongoTemplate.find(maxDateQuery, Valute.class);
+        maxDate = maxDateDTOs.size() == 1 ? maxDateDTOs.get(0).getDate() : null;
 
-        logger.info("get max date = " + maxDateDTO +
+        logger.info("get max date = " + maxDate +
                 ", " + (System.currentTimeMillis() - timeStart) + " nano");
 
-        if (maxDateDTO == null) {
+        if (maxDate == null) {
             return new ArrayList<>();
         }
 
-        maxDate = maxDateDTO.getUniqueDate();
-
         minDate = maxDate
-                .minus(days, ChronoUnit.DAYS)
-                .atZone(ZoneId.systemDefault()).toLocalDateTime();
+                .minus(days, ChronoUnit.DAYS);
 
         Aggregation selectAggregation = newAggregation(
                 match(Criteria.where("charCode").in(charCodes)

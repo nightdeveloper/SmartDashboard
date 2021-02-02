@@ -3,11 +3,9 @@ package com.github.nightdeveloper.smartdashboard;
 import com.github.nightdeveloper.smartdashboard.constants.Profiles;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
-import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
 import com.github.nightdeveloper.smartdashboard.entity.ComfortSensor;
 import com.github.nightdeveloper.smartdashboard.entity.PlugSensor;
 import com.github.nightdeveloper.smartdashboard.entity.Sensor;
-import com.github.nightdeveloper.smartdashboard.repository.SensorAggregationRepository;
 import com.github.nightdeveloper.smartdashboard.repository.SensorRepository;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +19,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -31,16 +30,11 @@ class SensorRepositoryServiceTest {
 
   private static final Logger logger = LogManager.getLogger(SensorRepositoryServiceTest.class);
 
-  public static final Long DAY_MILLISECONDS = 24 * 60 * 60 * 1000L;
-
   @Autowired
   private SensorRepository sensorRepository;
 
   @Autowired
   private SensorService sensorService;
-
-  @Autowired
-  private SensorAggregationRepository sensorAggregationRepository;
 
   @Test
   void contextLoads() {
@@ -64,7 +58,7 @@ class SensorRepositoryServiceTest {
     data1.setTemperature(new BigDecimal("36.6"));
     data1.setHumidity(new BigDecimal("50"));
     data1.setPressure(850L);
-    data1.setDate(new Date());
+    data1.setDate(LocalDateTime.now());
     data1.setLinkquality(77L);
     sensorRepository.save((Sensor) data1);
 
@@ -74,47 +68,47 @@ class SensorRepositoryServiceTest {
     data1.setHumidity(new BigDecimal("56"));
     data1.setBattery(25L);
     data1.setPressure(870L);
-    data1.setDate(new Date());
+    data1.setDate(LocalDateTime.now());
     sensorRepository.save((Sensor) data1);
 
     ComfortSensor data2 = new ComfortSensor();
     data2.setDeviceId("test2");
-    data2.setDate(new Date());
+    data2.setDate(LocalDateTime.now());
     sensorRepository.save((Sensor) data2);
 
     data2 = new ComfortSensor();
     data2.setDeviceId("test2");
     data2.setTemperature(new BigDecimal("77.77"));
-    data2.setDate(new Date());
+    data2.setDate(LocalDateTime.now());
     sensorRepository.save((Sensor) data2);
 
     ComfortSensor data3 = new ComfortSensor();
     data3.setDeviceId("test_battery");
-    data3.setDate(new Date(new Date().getTime() - 5 * DAY_MILLISECONDS));
+    data3.setDate(LocalDateTime.now().minus(5, ChronoUnit.DAYS));
     data3.setBattery(100L);
     sensorRepository.save((Sensor) data3);
 
     data3 = new ComfortSensor();
     data3.setDeviceId("test_battery");
-    data3.setDate(new Date(new Date().getTime() - 4 * DAY_MILLISECONDS));
+    data3.setDate(LocalDateTime.now().minus(4, ChronoUnit.DAYS));
     data3.setBattery(80L);
     sensorRepository.save((Sensor) data3);
 
     data3 = new ComfortSensor();
     data3.setDeviceId("test_battery");
-    data3.setDate(new Date(new Date().getTime() - 3 * DAY_MILLISECONDS));
+    data3.setDate(LocalDateTime.now().minus(3, ChronoUnit.DAYS));
     data3.setBattery(99L);
     sensorRepository.save((Sensor) data3);
 
     data3 = new ComfortSensor();
     data3.setDeviceId("test_battery");
-    data3.setDate(new Date(new Date().getTime() - 2 * DAY_MILLISECONDS));
+    data3.setDate(LocalDateTime.now().minus(2, ChronoUnit.DAYS));
     data3.setBattery(90L);
     sensorRepository.save((Sensor) data3);
 
     PlugSensor data4 = new PlugSensor();
     data4.setDeviceId("test_plug");
-    data4.setDate(new Date());
+    data4.setDate(LocalDateTime.now());
     data4.setState("ON");
     sensorRepository.save((Sensor) data4);
   }
@@ -182,9 +176,9 @@ class SensorRepositoryServiceTest {
 
   @Test
   void testSwitchesStatus() {
-    List<SwitchStateDTO> resultsList = sensorService.getSwitchStates();
+    List<PlugSensor> resultsList = sensorService.getPlugsState();
 
-    for(SwitchStateDTO switchStateDTO : resultsList) {
+    for(PlugSensor switchStateDTO : resultsList) {
       Assertions.assertNotNull(switchStateDTO.getDeviceId());
       Assertions.assertNotNull(switchStateDTO.getState());
       Assertions.assertNotNull(switchStateDTO.getDate());

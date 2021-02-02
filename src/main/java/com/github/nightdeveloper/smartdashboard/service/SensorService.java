@@ -5,6 +5,7 @@ import com.github.nightdeveloper.smartdashboard.common.Utils;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.BatteryStatusDTO;
 import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
+import com.github.nightdeveloper.smartdashboard.entity.PlugSensor;
 import com.github.nightdeveloper.smartdashboard.repository.SensorAggregationRepository;
 import org.springframework.stereotype.Service;
 
@@ -181,10 +182,10 @@ public class SensorService {
         return results;
     }
 
-    public List<SwitchStateDTO> getSwitchStates() {
-        List<SwitchStateDTO> result = sensorAggregationRepository.getSwitchLastStates();
+    public List<PlugSensor> getPlugsState() {
+        List<PlugSensor> result = sensorAggregationRepository.getSwitchLastStates();
 
-        result.sort(Comparator.comparing(SwitchStateDTO::getDeviceId));
+        result.sort(Comparator.comparing(PlugSensor::getDeviceId));
 
         return result;
     }

@@ -2,6 +2,7 @@ package com.github.nightdeveloper.smartdashboard.entity;
 
 import org.springframework.data.annotation.Id;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 public class Sensor {
@@ -9,7 +10,7 @@ public class Sensor {
     @Id
     protected String id;
     protected String deviceId;
-    protected Date date;
+    protected LocalDateTime date;
     protected Long linkquality;
 
     public Sensor() {
@@ -31,11 +32,11 @@ public class Sensor {
         this.deviceId = deviceId;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 

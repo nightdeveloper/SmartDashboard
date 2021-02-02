@@ -5,7 +5,6 @@ import com.github.nightdeveloper.smartdashboard.common.Devices;
 import com.github.nightdeveloper.smartdashboard.common.Utils;
 import com.github.nightdeveloper.smartdashboard.constants.ValuteConst;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
-import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
 import com.github.nightdeveloper.smartdashboard.property.CamerasProperty;
 import com.github.nightdeveloper.smartdashboard.property.WeatherProperty;
 import com.github.nightdeveloper.smartdashboard.repository.ValuteAggregationRepository;
@@ -57,6 +56,8 @@ public class DashboardController {
 
         logger.info("opened dashboard " + principal.getName());
 
+        long timeStart = System.currentTimeMillis();
+
         ModelAndView modelAndView = new ModelAndView("dashboard");
 
         Map<String, Object> model = modelAndView.getModel();
@@ -95,7 +96,7 @@ public class DashboardController {
         model.put("batteryStatus", sensorService.getBatteryStatus(lastBattery));
 
         logger.info("getting switchStatus");
-        model.put("switchStatus", sensorService.getSwitchStates());
+        model.put("switchStatus", sensorService.getPlugsState());
 
         // rate list
         logger.info("getting rates");
@@ -103,7 +104,7 @@ public class DashboardController {
                 new ArrayList<ValuteConst>() {{
                     add(ValuteConst.USD);
                     add(ValuteConst.EUR);
-                }}, 90));
+                }}, 45));
 
         // weather
         model.put("weatherProperty", weatherProperty);
@@ -113,6 +114,8 @@ public class DashboardController {
 
         // cameras
         model.put("cameras", camerasProperty.getList());
+
+        logger.info("dashboard generated for  " + (System.currentTimeMillis() - timeStart) + " nano");
 
         return modelAndView;
     }

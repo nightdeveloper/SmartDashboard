@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.github.nightdeveloper.smartdashboard.common.Constants.*;
@@ -54,7 +55,7 @@ public class TelemetryController {
             }
 
             Sensor fullData = (Sensor)objectMapper.readValue(request, device.getWrappingClass());
-            fullData.setDate(new Date());
+            fullData.setDate(LocalDateTime.now());
 
             logger.info("got info from " + device.getName() + " " + fullData);
 

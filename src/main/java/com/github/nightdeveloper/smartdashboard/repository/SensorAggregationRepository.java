@@ -3,7 +3,8 @@ package com.github.nightdeveloper.smartdashboard.repository;
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.IdResult;
 import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
-import com.github.nightdeveloper.smartdashboard.dto.UniqueDateDTO;
+import com.github.nightdeveloper.smartdashboard.entity.PlugSensor;
+import com.github.nightdeveloper.smartdashboard.entity.Sensor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.ConvertOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -135,25 +137,20 @@ public class SensorAggregationRepository {
 
         timeStart = System.currentTimeMillis();
 
-        Aggregation getMaxDate = newAggregation(
-                match(Criteria.where(field).ne(null)),
-                group().max("date").as("uniqueDate"),
-                project("uniqueDate")
-                        .andExclude("_id")
-        );
+        Query maxDateQuery = new Query();
+        maxDateQuery.addCriteria(Criteria.where(field).ne(null));
+        maxDateQuery.with(Sort.by(Sort.Direction.DESC, "$natural"));
+        maxDateQuery.limit(1);
 
-        UniqueDateDTO maxDateDTO = mongoTemplate
-                .aggregate(getMaxDate, "sensor", UniqueDateDTO.class)
-                .getUniqueMappedResult();
+        List<Sensor> maxDateDTOs = mongoTemplate.find(maxDateQuery, Sensor.class);
+        maxDate = maxDateDTOs.size() == 1 ? maxDateDTOs.get(0).getDate() : null;
 
-        logger.info(field + " rep: get max date for " + field + " = " + maxDateDTO +
+        logger.info(field + " rep: get max date for " + field + " = " + maxDate +
                 ", " + (System.currentTimeMillis() - timeStart) + " nano");
 
-        if (maxDateDTO == null) {
+        if (maxDate == null) {
             return new ArrayList<>();
         }
-
-        maxDate = maxDateDTO.getUniqueDate();
 
         minDate = maxDate
                 .minus(days, ChronoUnit.DAYS)
@@ -191,7 +188,7 @@ public class SensorAggregationRepository {
         return resultsSpring;
     }
 
-    public List<SwitchStateDTO> getSwitchLastStates() {
+    public List<PlugSensor> getSwitchLastStates() {
 
         long timeStart = System.currentTimeMillis();
         logger.info("getting state devices list");
@@ -211,33 +208,25 @@ public class SensorAggregationRepository {
         logger.info("got " + (System.currentTimeMillis() - timeStart) + " nano (items: "
                 + devicesListResult.size() + ")");
 
-        List<SwitchStateDTO> result = new ArrayList<>();
+        List<PlugSensor> result = new ArrayList<>();
 
         for(IdResult deviceId : devicesListResult) {
             timeStart = System.currentTimeMillis();
 
             logger.info("getting device state by id " + deviceId.get_id());
 
-            Aggregation lastDeviceStateAggregation = newAggregation(
-                    match(Criteria.where("deviceId").is(deviceId.get_id())),
+            Query lastStateQuery = new Query();
+            lastStateQuery.addCriteria(Criteria.where("deviceId").is(deviceId.get_id()));
+            lastStateQuery.with(Sort.by(Sort.Direction.DESC, "$natural"));
+            lastStateQuery.limit(1);
 
-                    project()
-                            .and("deviceId").as("deviceId")
-                            .and("date").as("date")
-                            .and("state").as("state")
-                            .andExclude("_id"),
+            List<Sensor> resultAll = mongoTemplate.find(lastStateQuery, Sensor.class);
 
-                    sort(Sort.Direction.DESC, "date"),
-
-                    limit(1)
-            );
-
-            AggregationResults<SwitchStateDTO> deviceStateAggregationResult = mongoTemplate
-                    .aggregate(lastDeviceStateAggregation, "sensor", SwitchStateDTO.class);
-
-            final List<SwitchStateDTO> deviceStateResult = deviceStateAggregationResult.getMappedResults();
-
-            result.addAll(deviceStateResult);
+            for(Sensor sensor : resultAll) {
+                if (sensor instanceof PlugSensor) {
+                    result.add((PlugSensor) sensor);
+                }
+            }
 
             logger.info("got " + (System.currentTimeMillis() - timeStart) + " nano (items: "
                     + devicesListResult.size() + ")");

@@ -19,7 +19,7 @@ CurrencyChart = function(canvasId, currencyRates, title) {
                     type: 'time',
                     display: true,
                     time: {
-                        tooltipFormat:'MM.DD.YYYY HH:mm'
+                        tooltipFormat:'DD.MM.YYYY HH:mm'
                     },
                     scaleLabel: {
                         display: false,

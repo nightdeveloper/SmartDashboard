@@ -28,8 +28,7 @@ package com.github.nightdeveloper.mdns_explorer.dns;
 
 import com.github.nightdeveloper.mdns_explorer.sd.Query;
 import com.github.nightdeveloper.mdns_explorer.sd.Service;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -38,12 +37,11 @@ import java.net.MulticastSocket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 
+@Slf4j
 public class Question extends Message {
     private final String qName;
     private final QType qType;
     private final QClass qClass;
-
-    private final static Logger logger = LogManager.getLogger(Question.class);
 
     private final static short UNICAST_RESPONSE_BIT = (short) 0x8000;
 
@@ -83,8 +81,6 @@ public class Question extends Message {
         buffer.putShort((short) qType.asUnsignedShort());
 
         // QCLASS
-        // TODO Figure out when to use to the unicast response bit
-//        buffer.putShort((short) (qClass.asUnsignedShort() | UNICAST_RESPONSE_BIT));
         buffer.putShort((short) (qClass.asUnsignedShort()));
     }
 
@@ -95,7 +91,6 @@ public class Question extends Message {
     }
 
     private void buildHeader() {
-//        super.buildHeader();
         buffer.putShort((short) 0x0); // ID should be 0
         buffer.put((byte) 0x0);
         buffer.put((byte) 0x0);
@@ -105,11 +100,11 @@ public class Question extends Message {
     }
 
     public void askOn(MulticastSocket socket, InetAddress group) throws IOException {
-        logger.debug("Asking question {}", this);
+        log.debug("Asking question {}", this);
         try {
             askWithGroup(group, socket);
         } catch (UnknownHostException e) {
-            System.err.println("UnknownHostException " + e);
+            log.error("askOn", e);
         }
     }
 

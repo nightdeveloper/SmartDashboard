@@ -2,8 +2,7 @@ package com.github.nightdeveloper.smartdashboard.repository;
 
 import com.github.nightdeveloper.smartdashboard.constants.ValuteConst;
 import com.github.nightdeveloper.smartdashboard.entity.Valute;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -22,9 +21,8 @@ import java.util.stream.Collectors;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Repository
+@Slf4j
 public class ValuteAggregationRepository {
-
-    private static final Logger logger = LogManager.getLogger(ValuteAggregationRepository.class);
 
     private final MongoTemplate mongoTemplate;
 
@@ -65,7 +63,7 @@ public class ValuteAggregationRepository {
         List<Valute> maxDateDTOs = mongoTemplate.find(maxDateQuery, Valute.class);
         maxDate = maxDateDTOs.size() == 1 ? maxDateDTOs.get(0).getDate() : null;
 
-        logger.info("get max date = " + maxDate +
+        log.info("get max date = " + maxDate +
                 ", " + (System.currentTimeMillis() - timeStart) + " nano");
 
         if (maxDate == null) {
@@ -87,7 +85,7 @@ public class ValuteAggregationRepository {
 
         final List<Valute> resultsSpring = result.getMappedResults();
 
-        logger.info("request run for " + (System.currentTimeMillis() - timeStart) + " nano (items: " + resultsSpring.size() + ")");
+        log.info("request run for " + (System.currentTimeMillis() - timeStart) + " nano (items: " + resultsSpring.size() + ")");
 
         return resultsSpring;
     }

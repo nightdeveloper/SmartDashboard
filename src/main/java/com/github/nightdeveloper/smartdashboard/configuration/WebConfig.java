@@ -1,4 +1,4 @@
-package com.github.nightdeveloper.smartdashboard;
+package com.github.nightdeveloper.smartdashboard.configuration;
 
 import com.github.nightdeveloper.smartdashboard.common.Constants;
 import com.github.nightdeveloper.smartdashboard.common.oauth2.YandexAuthorizationRequestResolver;

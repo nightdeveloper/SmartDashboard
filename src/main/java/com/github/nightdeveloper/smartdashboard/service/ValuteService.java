@@ -5,8 +5,7 @@ import com.github.nightdeveloper.smartdashboard.entity.Valute;
 import com.github.nightdeveloper.smartdashboard.model.SingleValute;
 import com.github.nightdeveloper.smartdashboard.model.ValCurs;
 import com.github.nightdeveloper.smartdashboard.repository.ValuteRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
@@ -14,18 +13,16 @@ import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ValuteService {
 
     public static final String CBR_DAILY = "http://www.cbr.ru/scripts/XML_daily.asp";
-
-    private static final Logger logger = LogManager.getLogger(ValuteService.class);
 
     private static final DateTimeFormatter valuteDateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
@@ -52,7 +49,7 @@ public class ValuteService {
 
         LocalDate parsedDate =  LocalDate.parse(valuteDate, valuteDateFormatter);
 
-        logger.debug("parsed date " + parsedDate);
+        log.debug("parsed date " + parsedDate);
 
         return parsedDate;
     }
@@ -64,7 +61,7 @@ public class ValuteService {
 
         BigDecimal parsedValue = new BigDecimal(value.replace(",", "."));
 
-        logger.debug("parsed value " + parsedValue);
+        log.debug("parsed value " + parsedValue);
 
         return parsedValue;
     }
@@ -83,7 +80,7 @@ public class ValuteService {
                         valuteRepository.findValuteEntitiesByCharCodeAndDate(singleValute.getCharCode(), date);
 
                 if (existing.size() > 0) {
-                    logger.info("valute " + singleValute.getCharCode() + " exists for date " + date);
+                    log.info("valute " + singleValute.getCharCode() + " exists for date " + date);
                     continue;
                 }
 
@@ -93,7 +90,7 @@ public class ValuteService {
                 valute.setValue(parseValue(singleValute.getValue()));
 
                 valuteRepository.save(valute);
-                logger.info("valute " + singleValute.getCharCode() +
+                log.info("valute " + singleValute.getCharCode() +
                         " saved for date " + date +
                         ", value = " + singleValute.getValue());
             }

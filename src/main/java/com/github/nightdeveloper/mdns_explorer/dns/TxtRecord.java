@@ -26,6 +26,7 @@
 
 package com.github.nightdeveloper.mdns_explorer.dns;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,11 +36,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class TxtRecord extends Record {
     private Map<String, String> attributes;
-
-    @SuppressWarnings("unused")
-    private final static Logger logger = LogManager.getLogger(TxtRecord.class);
 
     public TxtRecord(ByteBuffer buffer, String name, Record.Class recordClass, long ttl, int length) {
         super(name, recordClass, ttl);

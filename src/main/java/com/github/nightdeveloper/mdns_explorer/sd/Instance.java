@@ -27,6 +27,7 @@
 package com.github.nightdeveloper.mdns_explorer.sd;
 
 import com.github.nightdeveloper.mdns_explorer.dns.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,14 +35,13 @@ import java.net.InetAddress;
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class Instance {
     private final String name;
     private final String fullName;
     private final Set<InetAddress> addresses;
     private final Integer port;
     private final Map<String, String> attributes;
-
-    private final static Logger logger = LogManager.getLogger(Instance.class);
 
     static Instance createFromRecords(PtrRecord ptr, Set<Record> records) {
         String name = ptr.getUserVisibleName();
@@ -54,7 +54,7 @@ public class Instance {
                 .filter(r -> r instanceof SrvRecord && r.getName().equals(ptr.getPtrName()))
                 .map(r -> (SrvRecord) r).findFirst();
         if (srv.isPresent()) {
-            logger.debug("Using SrvRecord {} to create instance for {}", srv, ptr);
+            log.debug("Using SrvRecord {} to create instance for {}", srv, ptr);
             port = srv.get().getPort();
             addresses.addAll(records.stream().filter(r -> r instanceof ARecord)
                     .filter(r -> r.getName().equals(srv.get().getTarget())).map(r -> ((ARecord) r).getAddress())
@@ -63,13 +63,13 @@ public class Instance {
                     .filter(r -> r.getName().equals(srv.get().getTarget())).map(r -> ((AaaaRecord) r).getAddress())
                     .collect(Collectors.toList()));
         } else {
-            logger.debug("not addresses for instance");
+            log.debug("not addresses for instance");
         }
         Optional<TxtRecord> txt = records.stream()
                 .filter(r -> r instanceof TxtRecord && r.getName().equals(ptr.getPtrName()))
                 .map(r -> (TxtRecord) r).findFirst();
         if (txt.isPresent()) {
-            logger.debug("Using TxtRecord {} to create attributes for {}", txt, ptr);
+            log.debug("Using TxtRecord {} to create attributes for {}", txt, ptr);
             attributes = txt.get().getAttributes();
         }
         return new Instance(name, fullName, addresses, port, attributes);

@@ -1,7 +1,6 @@
 package com.github.nightdeveloper.smartdashboard;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -15,13 +14,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 @ConfigurationPropertiesScan
 @EnableConfigurationProperties
+@Slf4j
 public class SmartDashboardApplication extends SpringBootServletInitializer {
-
-    private static final Logger logger = LogManager.getLogger(SmartDashboardApplication.class);
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
-        logger.info("Configuring cors");
+        log.info("Configuring cors");
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {

@@ -26,8 +26,7 @@
 
 package com.github.nightdeveloper.mdns_explorer.utils;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -35,9 +34,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+@Slf4j
 public class Utils {
     private static int nextDumpPathSuffix;
-    private final static Logger logger = LogManager.getLogger(Utils.class);
 
     static {
         nextDumpPathSuffix = 1;
@@ -56,10 +55,10 @@ public class Utils {
         printBuffer(buffer, "Buffer to save");
         try {
             Path path = getNextPath(prefix);
-            logger.info("Dumping buffer to {}", path);
+            log.info("Dumping buffer to {}", path);
             Files.write(path, buffer);
         } catch (IOException e) {
-            logger.error("Error writing file: {}", e.getLocalizedMessage());
+            log.error("Error writing file: {}", e.getLocalizedMessage());
         }
     }
 
@@ -93,6 +92,6 @@ public class Utils {
             sb.append(String.format("%02x", buffer[i]));
         }
 
-        logger.info("{}: {}", msg, sb.toString());
+        log.info("{}: {}", msg, sb.toString());
     }
 }

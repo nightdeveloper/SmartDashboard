@@ -1,8 +1,7 @@
 package com.github.nightdeveloper.smartdashboard.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -11,14 +10,13 @@ import java.io.OutputStream;
 import java.net.URL;
 
 @Service
+@Slf4j
 public class UrlService {
-
-    final static Logger logger = LogManager.getLogger(UrlService.class);
 
     public void copyCameraImageToStream(String url, OutputStream outputStream) throws IOException {
 
         try (InputStream inputStream = new URL(url).openStream()) {
-            logger.info("returning image");
+            log.info("returning image");
             IOUtils.copy(inputStream, outputStream);
         }
     }

@@ -1,18 +1,15 @@
 package com.github.nightdeveloper.smartdashboard.service;
 
 import com.github.nightdeveloper.smartdashboard.constants.Profiles;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Service
 @Profile("!" + Profiles.TEST)
+@Slf4j
 public class SchedulerService {
-
-    private static final Logger logger = LogManager.getLogger(SchedulerService.class);
-
     private final ValuteService valuteService;
 
     private final ArchiveService archiveService;
@@ -24,13 +21,13 @@ public class SchedulerService {
 
     @Scheduled(cron = "${cameras.archive.cron}")
     public void scheduleArchive() {
-        logger.info("scheduleArchive");
+        log.info("scheduleArchive");
         archiveService.getCamerasAndMoveToArchive();
     }
 
     @Scheduled(fixedDelay = 12 * 60 * 60 * 1000 )
     public void scheduleValuteRateUpdate() {
-        logger.info("scheduleValuteRateUpdate");
+        log.info("scheduleValuteRateUpdate");
         valuteService.saveFavouriteValuteRate(valuteService.requestCurrentValute());
     }
 }

@@ -5,9 +5,9 @@ import com.github.nightdeveloper.mdns_explorer.sd.Instance;
 import com.github.nightdeveloper.mdns_explorer.sd.Query;
 import com.github.nightdeveloper.mdns_explorer.sd.Service;
 import com.github.nightdeveloper.smartdashboard.common.Constants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -25,9 +26,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
+@Slf4j
 public class DiscoveryController {
-
-    final static Logger logger = LogManager.getLogger(DiscoveryController.class);
 
     private static List<InetAddress> getLocalAddresses(HttpServletResponse response)
             throws IOException {
@@ -45,7 +45,7 @@ public class DiscoveryController {
     }
 
     private static void logToStream(HttpServletResponse response, String str) {
-        logger.info(str);
+        log.info(str);
 
         try {
             response.getOutputStream().print(str + "<br/>");
@@ -55,11 +55,12 @@ public class DiscoveryController {
         }
     }
 
-    @RequestMapping(value = Constants.ENDPOINT_DISCOVERY, method = RequestMethod.GET)
+    @GetMapping(value = Constants.ENDPOINT_DISCOVERY)
     @ResponseBody
-    public void discovery(Principal principal, HttpServletResponse response) throws Exception {
+    public void discovery(Principal principal, HttpServletResponse response) throws UnknownHostException,
+            IOException {
 
-        logger.info("started discovery " + principal.getName());
+        log.info("started discovery " + principal.getName());
 
         response.setBufferSize(0);
         response.setContentType("text/event-stream");

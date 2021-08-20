@@ -8,8 +8,7 @@ import com.github.nightdeveloper.smartdashboard.entity.PlugSensor;
 import com.github.nightdeveloper.smartdashboard.entity.Sensor;
 import com.github.nightdeveloper.smartdashboard.repository.SensorRepository;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,9 +25,8 @@ import java.util.Map;
 
 @SpringBootTest
 @ActiveProfiles(profiles = Profiles.TEST)
+@Slf4j
 class SensorRepositoryServiceTest {
-
-  private static final Logger logger = LogManager.getLogger(SensorRepositoryServiceTest.class);
 
   @Autowired
   private SensorRepository sensorRepository;
@@ -38,6 +36,7 @@ class SensorRepositoryServiceTest {
 
   @Test
   void contextLoads() {
+    // just test context loads
   }
 
   @AfterEach
@@ -98,12 +97,14 @@ class SensorRepositoryServiceTest {
     data3.setDeviceId("test_battery");
     data3.setDate(LocalDateTime.now().minus(3, ChronoUnit.DAYS));
     data3.setBattery(99L);
+    data3.setVoltage(5100L);
     sensorRepository.save((Sensor) data3);
 
     data3 = new ComfortSensor();
     data3.setDeviceId("test_battery");
     data3.setDate(LocalDateTime.now().minus(2, ChronoUnit.DAYS));
     data3.setBattery(90L);
+    data3.setVoltage(5000L);
     sensorRepository.save((Sensor) data3);
 
     PlugSensor data4 = new PlugSensor();
@@ -163,10 +164,10 @@ class SensorRepositoryServiceTest {
       Assertions.assertNotNull(batteryStatusDTO.getDeviceId());
 
       if ("test_battery".equals(batteryStatusDTO.getDeviceId())) {
-        Assertions.assertEquals(90.0, batteryStatusDTO.getCurrentValue());
+        Assertions.assertEquals(5000.0, batteryStatusDTO.getCurrentValue());
         Assertions.assertNotNull(batteryStatusDTO.getCurrentValueDate());
 
-        Assertions.assertEquals(99.0, batteryStatusDTO.getLastMaxValue());
+        Assertions.assertEquals(5100.0, batteryStatusDTO.getLastMaxValue());
         Assertions.assertNotNull(batteryStatusDTO.getLastMaxValueDate());
 
         Assertions.assertNotNull(batteryStatusDTO.getDateDischarge());
@@ -194,9 +195,7 @@ class SensorRepositoryServiceTest {
       if (data instanceof ComfortSensor) {
         ComfortSensor cData = (ComfortSensor) data;
         Assertions.assertNotNull(cData.getDeviceId());
-        if (cData.getDate() == null) {
-          Assertions.assertNotNull(cData.getDate());
-        }
+        Assertions.assertNotNull(cData.getDate());
       }
     }
   }

@@ -26,8 +26,7 @@
 
 package com.github.nightdeveloper.mdns_explorer.dns;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.UnsupportedEncodingException;
 import java.net.UnknownHostException;
@@ -36,13 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public abstract class Record {
     protected final String name;
     protected final long ttl;
 
     protected final Class recordClass;
-
-    private final static Logger logger = LogManager.getLogger(Record.class);
 
     public final static int USHORT_MASK = 0xFFFF;
     public final static long UINT_MASK = 0xFFFFFFFFL;
@@ -51,10 +49,7 @@ public abstract class Record {
     public static Record fromBuffer(ByteBuffer buffer) {
         String name = readNameFromBuffer(buffer);
         Type type = Type.fromInt(buffer.getShort() & USHORT_MASK);
-//        int rrClassByte = buffer.getShort() & 0x7FFF;
         int tmp = buffer.getShort() & 0xFFFF;
-        // FIXME allow the user to see that cache's should be flushed?
-        boolean flushCache = (tmp & 0x8000) == 0x8000;
         int rrClassByte = tmp & 0x7FFF;
         Class recordClass = Class.fromInt(rrClassByte);
         long ttl = buffer.getInt() & UINT_MASK;
@@ -80,7 +75,7 @@ public abstract class Record {
             case TXT:
                 return new TxtRecord(buffer, name, recordClass, ttl, rdLength);
             default:
-                logger.debug("Buffer represents an unsupported record type, skipping ahead {} bytes", rdLength);
+                log.debug("Buffer represents an unsupported record type, skipping ahead {} bytes", rdLength);
                 return new UnknownRecord(buffer, name, recordClass, ttl, rdLength);
         }
     }
@@ -130,7 +125,7 @@ public abstract class Record {
             try {
                 label = new String(labelBuffer, NAME_CHARSET);
             } catch (UnsupportedEncodingException e) {
-                System.err.println("UnsupportedEncoding: " + e);
+                log.error("reasdLabel", e);
             }
         }
         return label;

@@ -2,11 +2,9 @@ package com.github.nightdeveloper.smartdashboard.repository;
 
 import com.github.nightdeveloper.smartdashboard.dto.AverageDeviceValueDTO;
 import com.github.nightdeveloper.smartdashboard.dto.IdResult;
-import com.github.nightdeveloper.smartdashboard.dto.SwitchStateDTO;
 import com.github.nightdeveloper.smartdashboard.entity.PlugSensor;
 import com.github.nightdeveloper.smartdashboard.entity.Sensor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,9 +23,8 @@ import java.util.*;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
 
 @Repository
+@Slf4j
 public class SensorAggregationRepository {
-
-    private static final Logger logger = LogManager.getLogger(SensorAggregationRepository.class);
 
     private final MongoTemplate mongoTemplate;
 
@@ -63,14 +60,14 @@ public class SensorAggregationRepository {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
 
-        logger.info(field + " opt: get max date for " + field + " = " + maxDate +
+        log.info(field + " opt: get max date for " + field + " = " + maxDate +
                 ", " + (System.currentTimeMillis() - timeStart) + " nano");
 
         minDate = maxDate
                 .minus(days, ChronoUnit.DAYS)
                 .atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-        logger.info(field + " opt: get min date for " + field + " = " + minDate);
+        log.info(field + " opt: get min date for " + field + " = " + minDate);
 
         List<Bson> selectAggregateBSON = Arrays.asList(
                 Aggregates.match(Filters.and(
@@ -131,7 +128,7 @@ public class SensorAggregationRepository {
             }});
         });
 
-        logger.info(field + " opt: request run for " + (System.currentTimeMillis() - timeStart) + " nano (items: " + results.size() + ")");
+        log.info(field + " opt: request run for " + (System.currentTimeMillis() - timeStart) + " nano (items: " + results.size() + ")");
 */
         // -------------------------------------------------------------------
 
@@ -145,7 +142,7 @@ public class SensorAggregationRepository {
         List<Sensor> maxDateDTOs = mongoTemplate.find(maxDateQuery, Sensor.class);
         maxDate = maxDateDTOs.size() == 1 ? maxDateDTOs.get(0).getDate() : null;
 
-        logger.info(field + " rep: get max date for " + field + " = " + maxDate +
+        log.info(field + " rep: get max date for " + field + " = " + maxDate +
                 ", " + (System.currentTimeMillis() - timeStart) + " nano");
 
         if (maxDate == null) {
@@ -157,7 +154,7 @@ public class SensorAggregationRepository {
                 .atZone(ZoneId.systemDefault()).toLocalDateTime();
 
 
-        logger.info(field + " rep: get min date for " + field + " = " + minDate);
+        log.info(field + " rep: get min date for " + field + " = " + minDate);
 
         Aggregation selectAggregation = newAggregation(
                 match(Criteria.where(field).ne(null)
@@ -174,6 +171,7 @@ public class SensorAggregationRepository {
                 ,
                 group("deviceId", "year", "month", "day", "hour", "minute")
                         .avg("convertedValue").as("average"),
+                project("deviceId", "year", "month", "day", "hour", "minute", "average"),
                 sort(Sort.Direction.DESC, "deviceId", "year", "month", "day", "hour", "minute")
         );
 
@@ -183,7 +181,7 @@ public class SensorAggregationRepository {
 
         final List<AverageDeviceValueDTO> resultsSpring = result.getMappedResults();
 
-        logger.info(field + " rep: request run for " + (System.currentTimeMillis() - timeStart) + " nano (items: " + resultsSpring.size() + ")");
+        log.info(field + " rep: request run for " + (System.currentTimeMillis() - timeStart) + " nano (items: " + resultsSpring.size() + ")");
 
         return resultsSpring;
     }
@@ -191,7 +189,7 @@ public class SensorAggregationRepository {
     public List<PlugSensor> getSwitchLastStates() {
 
         long timeStart = System.currentTimeMillis();
-        logger.info("getting state devices list");
+        log.info("getting state devices list");
 
         Aggregation devicesListAggregation = newAggregation(
                 match(Criteria.where("state").ne(null)),
@@ -205,7 +203,7 @@ public class SensorAggregationRepository {
 
         final List<IdResult> devicesListResult = devicesListAggregationResult.getMappedResults();
 
-        logger.info("got " + (System.currentTimeMillis() - timeStart) + " nano (items: "
+        log.info("got " + (System.currentTimeMillis() - timeStart) + " nano (items: "
                 + devicesListResult.size() + ")");
 
         List<PlugSensor> result = new ArrayList<>();
@@ -213,7 +211,7 @@ public class SensorAggregationRepository {
         for(IdResult deviceId : devicesListResult) {
             timeStart = System.currentTimeMillis();
 
-            logger.info("getting device state by id " + deviceId.get_id());
+            log.info("getting device state by id " + deviceId.get_id());
 
             Query lastStateQuery = new Query();
             lastStateQuery.addCriteria(Criteria.where("deviceId").is(deviceId.get_id()));
@@ -228,7 +226,7 @@ public class SensorAggregationRepository {
                 }
             }
 
-            logger.info("got " + (System.currentTimeMillis() - timeStart) + " nano (items: "
+            log.info("got " + (System.currentTimeMillis() - timeStart) + " nano (items: "
                     + devicesListResult.size() + ")");
         }
 

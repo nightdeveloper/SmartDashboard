@@ -26,12 +26,14 @@
 
 package com.github.nightdeveloper.mdns_explorer.dns;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.DatagramPacket;
 import java.util.*;
 
+@Slf4j
 public class Response extends Message {
     private final List<Question> questions;
     private final List<Record> records;

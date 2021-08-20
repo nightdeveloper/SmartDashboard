@@ -10,12 +10,10 @@ import com.github.nightdeveloper.smartdashboard.property.WeatherProperty;
 import com.github.nightdeveloper.smartdashboard.repository.ValuteAggregationRepository;
 import com.github.nightdeveloper.smartdashboard.service.SensorService;
 import com.github.nightdeveloper.smartdashboard.service.SunService;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -25,19 +23,18 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
+@Slf4j
 public class DashboardController {
 
-    private static final Logger logger = LogManager.getLogger(IndexController.class);
+    private final SensorService sensorService;
+    private final SunService sunService;
 
-    final private SensorService sensorService;
-    final private SunService sunService;
+    private final Devices devices;
 
-    final private Devices devices;
+    private final CamerasProperty camerasProperty;
+    private final WeatherProperty weatherProperty;
 
-    final private CamerasProperty camerasProperty;
-    final private WeatherProperty weatherProperty;
-
-    final private ValuteAggregationRepository valuteAggregationRepository;
+    private final ValuteAggregationRepository valuteAggregationRepository;
 
     public DashboardController(SensorService sensorService, Devices devices, CamerasProperty camerasProperty,
                                ValuteAggregationRepository valuteAggregationRepository,
@@ -50,11 +47,11 @@ public class DashboardController {
         this.sunService = sunService;
     }
 
-    @RequestMapping(value = Constants.ENDPOINT_DASHBOARD, method = RequestMethod.GET)
+    @GetMapping(value = Constants.ENDPOINT_DASHBOARD)
     @ResponseBody
     public ModelAndView dashboard(Principal principal) {
 
-        logger.info("opened dashboard " + principal.getName());
+        log.info("opened dashboard " + principal.getName());
 
         long timeStart = System.currentTimeMillis();
 
@@ -70,36 +67,36 @@ public class DashboardController {
         // smart home
         model.put("devices", devices.getDevices());
 
-        logger.info("getting temperatures");
+        log.info("getting temperatures");
         model.put("temperatures", sensorService.getLastTemperatures());
 
-        logger.info("getting humidity");
+        log.info("getting humidity");
         model.put("humidity", sensorService.getLastHumidity());
 
-        logger.info("getting pressure");
+        log.info("getting pressure");
         model.put("pressure", sensorService.getLastPressure());
 
-        logger.info("getting linkQuality");
+        log.info("getting linkQuality");
         model.put("linkQuality", sensorService.getLastLinkQuality());
 
-        logger.info("getting lastBattery");
+        log.info("getting lastBattery");
         List<AverageDeviceValueDTO> lastBattery =
                 sensorService.getLastBattery();
 
-        logger.info("getting VoltageListToPercentageList");
+        log.info("getting VoltageListToPercentageList");
         Utils.batteryVoltageListToPercentageList(lastBattery);
 
-        logger.info("getting battery");
+        log.info("getting battery");
         model.put("battery", lastBattery);
 
-        logger.info("getting batteryStatus");
+        log.info("getting batteryStatus");
         model.put("batteryStatus", sensorService.getBatteryStatus(lastBattery));
 
-        logger.info("getting switchStatus");
+        log.info("getting switchStatus");
         model.put("switchStatus", sensorService.getPlugsState());
 
         // rate list
-        logger.info("getting rates");
+        log.info("getting rates");
         model.put("rates", valuteAggregationRepository.getValuteByPeriod(
                 new ArrayList<ValuteConst>() {{
                     add(ValuteConst.USD);
@@ -109,13 +106,13 @@ public class DashboardController {
         // weather
         model.put("weatherProperty", weatherProperty);
 
-        logger.info("getting sunInfo");
+        log.info("getting sunInfo");
         model.put("sunInfo", sunService.getSunInfo());
 
         // cameras
         model.put("cameras", camerasProperty.getList());
 
-        logger.info("dashboard generated for  " + (System.currentTimeMillis() - timeStart) + " nano");
+        log.info("dashboard generated for  " + (System.currentTimeMillis() - timeStart) + " nano");
 
         return modelAndView;
     }

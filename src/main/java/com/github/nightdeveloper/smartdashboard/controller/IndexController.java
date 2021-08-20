@@ -1,15 +1,12 @@
 package com.github.nightdeveloper.smartdashboard.controller;
 
 import com.github.nightdeveloper.smartdashboard.common.Constants;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -17,26 +14,26 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
+@Slf4j
 public class IndexController {
-
-    private static final Logger logger = LogManager.getLogger(IndexController.class);
 
     @GetMapping("favicon.ico")
     @ResponseBody
-    void returnNoFavicon() {
+    public void returnNoFavicon() {
+        // do nothing
     }
 
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @GetMapping(value = "/")
     @ResponseBody
     public String index() {
-        logger.info("index requested");
+        log.info("index requested");
         return "alive";
     }
 
-    @RequestMapping(value = Constants.ENDPOINT_LOGOUT_USER, method = RequestMethod.GET)
+    @GetMapping(value = Constants.ENDPOINT_LOGOUT_USER)
     @ResponseBody
     public RedirectView logout(HttpServletRequest request, HttpServletResponse response) {
-        logger.info("logout requested");
+        log.info("logout requested");
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 

@@ -27,6 +27,7 @@
 package com.github.nightdeveloper.mdns_explorer.sd;
 
 import com.github.nightdeveloper.mdns_explorer.dns.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,6 +41,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class Query {
     private final Service service;
     private final Domain domain;
@@ -57,8 +59,6 @@ public class Query {
     private Set<Record> records;
     private boolean listenerStarted;
     private boolean listenerFinished;
-
-    private final static Logger logger = LogManager.getLogger(Query.class);
 
     public static final String MDNS_IP4_ADDRESS = "224.0.0.251";
     public static final String MDNS_IP6_ADDRESS = "FF02::FB";
@@ -123,7 +123,7 @@ public class Query {
      * @throws IOException thrown on socket and network errors
      */
     public Set<Instance> runOnceOn(InetAddress localhost) throws IOException {
-        logger.debug("Running query on {}", localhost);
+        log.debug("Running query on {}", localhost);
         initialQuestion = new Question(service, domain);
         instances = Collections.synchronizedSet(new HashSet<>());
         try {
@@ -132,7 +132,7 @@ public class Query {
                 openSocket(localhost);
                 listener = listenForResponses();
                 while (!isServerIsListening()) {
-                    logger.debug("Server is not yet listening");
+                    log.debug("Server is not yet listening");
                 }
             }
             ask(initialQuestion);
@@ -140,7 +140,7 @@ public class Query {
                 try {
                     listener.join();
                 } catch (InterruptedException e) {
-                    logger.error("InterruptedException while listening for mDNS responses: ", e);
+                    log.error("InterruptedException while listening for mDNS responses: ", e);
                 }
             }
         } finally {
@@ -151,7 +151,7 @@ public class Query {
 
     private void ask(Question question) throws IOException {
         if (questions.contains(question)) {
-            logger.debug("We've already asked {}, we won't ask again", question);
+            log.debug("We've already asked {}, we won't ask again", question);
             return;
         }
 
@@ -169,14 +169,14 @@ public class Query {
         try {
             while (!socketLock.tryLock(WAIT_FOR_LISTENER_MS, TimeUnit.MILLISECONDS)) {
                 socketLock.notify();
-                logger.debug("Waiting to acquire socket lock");
+                log.debug("Waiting to acquire socket lock");
             }
             if (listenerFinished) {
                 throw new RuntimeException("Listener has already finished");
             }
             retval = listenerStarted;
         } catch (InterruptedException e) {
-            logger.error("Interrupted while waiting to acquire socket lock: ", e);
+            log.error("Interrupted while waiting to acquire socket lock: ", e);
             throw new RuntimeException("Server is not listening");
         } finally {
             socketLock.unlock();
@@ -201,14 +201,14 @@ public class Query {
             socket.joinGroup(mdnsGroupIPv4);
             isUsingIPv4 = true;
         } catch (SocketException e) {
-            logger.error("SocketException when joining group for {}, IPv4-only hosts will not be found",
+            log.error("SocketException when joining group for {}, IPv4-only hosts will not be found",
                     MDNS_IP4_ADDRESS, e);
         }
         try {
             socket.joinGroup(mdnsGroupIPv6);
             isUsingIPv6 = true;
         } catch (SocketException e) {
-            logger.error("SocketException when joining group for {}, IPv6-only hosts will not be found",
+            log.error("SocketException when joining group for {}, IPv6-only hosts will not be found",
                     MDNS_IP6_ADDRESS, e);
         }
         if (!isUsingIPv4 && !isUsingIPv6) {
@@ -235,16 +235,16 @@ public class Query {
             byte[] responseBuffer = new byte[Message.MAX_LENGTH];
             DatagramPacket responsePacket = new DatagramPacket(responseBuffer, responseBuffer.length);
             try {
-                logger.debug("Listening for responses...");
+                log.debug("Listening for responses...");
                 socket.receive(responsePacket);
                 currentTime = System.currentTimeMillis();
                 //Utils.dumpPacket(responsePacket, "response");
-                logger.debug("Response received!");
-//                logger.debug("Response of length {} at offset {}: {}", responsePacket.getLength(), responsePacket.getOffset(), responsePacket.getData());
+                log.debug("Response received!");
+//                log.debug("Response of length {} at offset {}: {}", responsePacket.getLength(), responsePacket.getOffset(), responsePacket.getData());
                 try {
                     parseResponsePacket(responsePacket);
                 } catch (IllegalArgumentException e) {
-                    logger.debug("Response was not a mDNS response packet, ignoring it (" + e.getMessage() + ")");
+                    log.debug("Response was not a mDNS response packet, ignoring it (" + e.getMessage() + ")");
                     timeouts = 0;
                     continue;
                 }
@@ -252,7 +252,7 @@ public class Query {
             } catch (SocketTimeoutException e) {
                 timeouts++;
             } catch (IOException e) {
-                logger.error("IOException while listening for mDNS responses: ", e);
+                log.error("IOException while listening for mDNS responses: ", e);
             }
         }
         socketLock.lock();
@@ -269,7 +269,7 @@ public class Query {
             fetchMissingRecords();
         } else {
             // This response isn't related to any of the questions we asked
-            logger.debug("This response doesn't answer any of our questions, ignoring it.");
+            log.debug("This response doesn't answer any of our questions, ignoring it.");
         }
     }
 
@@ -278,8 +278,8 @@ public class Query {
      * Request any that are missing.
      */
     private void fetchMissingRecords() throws IOException {
-        logger.debug("Records includes:");
-        records.forEach(r -> logger.debug("{}", r));
+        log.debug("Records includes:");
+        records.forEach(r -> log.debug("{}", r));
         for (PtrRecord ptr : records.stream().filter(r -> r instanceof PtrRecord).map(r -> (PtrRecord) r).collect(Collectors.toList())) {
             fetchMissingSrvRecordsFor(ptr);
             fetchMissingTxtRecordsFor(ptr);
@@ -294,7 +294,7 @@ public class Query {
                 r -> r.getName().equals(ptr.getPtrName())
         ).count();
         if (numRecords == 0) {
-            logger.debug("Response has no SRV records");
+            log.debug("Response has no SRV records");
             querySrvRecordFor(ptr);
         }
     }
@@ -304,7 +304,7 @@ public class Query {
                 r -> r.getName().equals(ptr.getPtrName())
         ).count();
         if (numRecords == 0) {
-            logger.debug("Response has no TXT records");
+            log.debug("Response has no TXT records");
             queryTxtRecordFor(ptr);
         }
     }
@@ -314,7 +314,7 @@ public class Query {
                 r -> r.getName().equals(srv.getTarget())
         ).count();
         if (numRecords == 0) {
-            logger.debug("Response has no A or AAAA records");
+            log.debug("Response has no A or AAAA records");
             queryAddressesFor(srv);
         }
     }

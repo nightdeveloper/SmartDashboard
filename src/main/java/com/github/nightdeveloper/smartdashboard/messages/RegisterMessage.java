@@ -7,6 +7,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class RegisterResponse {
+public class RegisterMessage {
+    private String sessionId;
     private String message;
 }

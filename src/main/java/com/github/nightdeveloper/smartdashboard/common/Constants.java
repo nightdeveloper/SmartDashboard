@@ -18,7 +18,13 @@ public class Constants {
     public static final String ENDPOINT_IMAGES = "/images";
     public static final String ENDPOINT_IMAGE = "/image";
 
+    public static final String ENDPOINT_WSTEST = "/wstest";
+
     public static final String ENDPOINT_LOGOUT_USER = "/logoutUser";
+
+    public static final String MESSAGE_MAPPING_REGISTER = "/register";
+
+    public static final String TOPIC_REGISTER = "/topic/register";
 
     public static final String RESPONSE_OK = "OK";
     public static final String RESPONSE_FAILED = "FAILED";

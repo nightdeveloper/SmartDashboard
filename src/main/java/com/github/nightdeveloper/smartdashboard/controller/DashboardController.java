@@ -50,7 +50,6 @@ public class DashboardController {
     @GetMapping(value = Constants.ENDPOINT_DASHBOARD)
     @ResponseBody
     public ModelAndView dashboard(Principal principal) {
-
         log.info("opened dashboard " + principal.getName());
 
         long timeStart = System.currentTimeMillis();

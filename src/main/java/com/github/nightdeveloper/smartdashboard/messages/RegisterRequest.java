@@ -1,12 +1,12 @@
 package com.github.nightdeveloper.smartdashboard.messages;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class RegisterRequest {
     private String id;
 }

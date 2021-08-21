@@ -1,12 +1,11 @@
-var stompClient = null;
+window.stompClient = null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
         $("#conversation").show();
-    }
-    else {
+    } else {
         $("#conversation").hide();
     }
     $("#messages").html("");
@@ -14,26 +13,42 @@ function setConnected(connected) {
 
 function connect() {
     var socket = new SockJS('/websocket');
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+    window.stompClient = Stomp.over(socket);
+    window.stompClient.connect({}, function (frame) {
         setConnected(true);
         console.log('Connected: ' + frame);
-        stompClient.subscribe('/topic/register', function (msg) {
+        window.stompClient.subscribe('/topic/register', function (msg) {
             showMessage(JSON.parse(msg.body).message);
         });
     });
 }
 
 function disconnect() {
-    if (stompClient !== null) {
-        stompClient.disconnect();
+    if (window.stompClient !== null) {
+        window.stompClient.disconnect();
     }
     setConnected(false);
     console.log("Disconnected");
 }
 
 function sendMessage() {
-    stompClient.send('/app/register', {}, JSON.stringify({'id': $("#name").val()}));
+    window.stompClient.send('/app/register', {}, JSON.stringify({'id': $("#testText").val()}));
+}
+
+function sendFile() {
+    let file = $("#testFile")[0].files[0];
+
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = function () {
+        window.stompClient.send('/app/image', {},
+            JSON.stringify(
+                {
+                    'position' : 'center',
+                    'file': reader.result
+                }));
+    };
 }
 
 function showMessage(message) {
@@ -44,7 +59,16 @@ $(function () {
     $("form").on('submit', function (e) {
         e.preventDefault();
     });
-    $( "#connect" ).click(function() { connect(); });
-    $( "#disconnect" ).click(function() { disconnect(); });
-    $( "#send" ).click(function() { sendMessage(); });
+    $("#connect").click(function () {
+        connect();
+    });
+    $("#disconnect").click(function () {
+        disconnect();
+    });
+    $("#send").click(function () {
+        sendMessage();
+    });
+    $("#sendFile").click(function () {
+        sendFile();
+    });
 });

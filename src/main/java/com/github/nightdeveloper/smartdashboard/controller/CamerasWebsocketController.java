@@ -54,7 +54,7 @@ public class CamerasWebsocketController {
 
             return new ImageMessage(headers.getSessionId(), request.getPosition(),
                     decodedBytes);
-            
+
         } catch(IllegalArgumentException e) {
             log.error("invalid base64 text", e);
             throw new WebsocketException("Invalid incoming image");

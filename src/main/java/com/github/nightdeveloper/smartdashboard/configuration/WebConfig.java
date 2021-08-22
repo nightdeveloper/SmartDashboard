@@ -34,7 +34,8 @@ public class WebConfig extends WebSecurityConfigurerAdapter {
                             Constants.REST_TELEMETRY,
                             Constants.MANIFEST,
                             Constants.SERVICE_WORKER,
-                            Constants.STATIC_IMAGES
+                            Constants.STATIC_IMAGES,
+                            Constants.REST_WEBSOCKET
                             )
                     .permitAll()
 

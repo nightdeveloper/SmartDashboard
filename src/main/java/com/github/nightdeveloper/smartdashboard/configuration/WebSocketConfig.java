@@ -1,5 +1,6 @@
 package com.github.nightdeveloper.smartdashboard.configuration;
 
+import com.github.nightdeveloper.smartdashboard.common.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -29,8 +30,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         log.info("request stomp endpoints");
-        registry.addEndpoint("/websocket")
-                .withSockJS();
+        registry.addEndpoint(Constants.REST_WEBSOCKET)
+                .setAllowedOrigins("*")
+//                .withSockJS()
+        ;
     }
 
 }

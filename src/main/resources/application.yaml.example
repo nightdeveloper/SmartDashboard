@@ -6,6 +6,15 @@ spring:
     port: '27017'
     database: 'test'
 
+  jpa:
+    hibernate:
+      ddl-auto: create
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  datasource:
+    url: "jdbc:postgresql://localhost:5432/moex"
+    username: postgres
+    password: <pass>
+
   security.oauth2.client:
     registration.yandex:
       client-id: 'hash'
